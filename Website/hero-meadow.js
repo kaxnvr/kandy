@@ -81,6 +81,9 @@ const tierName = (() => {
   return 'high';
 })();
 const Q = { ...TIERS[tierName] };
+// The low-tier override also exposes the real phone turf treatment to the
+// isolated quality preview; ordinary fine-pointer desktops keep their finish.
+const mobileMeadow = tierName === 'low' || matchMedia('(pointer:coarse)').matches;
 
 // Identical to the standalone demo's renderer, deliberately. An earlier
 // revision added preserveDrawingBuffer:true here to stop a paused frame from
@@ -310,7 +313,7 @@ const cloudTexBlob = makeCloudTex(
 // lens sees the mound BEHIND it, decides that is nearly in focus, and would
 // leave a razor-sharp dark wedge in the corner of the frame. Anything that
 // does not write depth has to carry its own softness.
-const blurBladeTex = tex(256, (g,s)=>{
+const blurBladeTex = mobileMeadow ? null : tex(256, (g,s)=>{
   g.clearRect(0,0,s,s);
   g.filter = 'blur(11px)';
   g.fillStyle = '#1E3F17';
@@ -1097,6 +1100,7 @@ let narrowGrassMat = null;
       // Enabled only on the cloned rear field, where the old separable patch
       // pattern reads as vertical stripes on the centre hill.
       uFarHillFix:{value:0},
+      uMobileSoftness:{value:mobileMeadow ? 1 : 0},
       // Gravity straightens only the sloped front of the near mound. The
       // distant field receives a clone with this disabled below.
       uUprightNear:{value:1},
@@ -1106,7 +1110,7 @@ let narrowGrassMat = null;
     },
     vertexShader:`
       attribute vec3 iPos, iNrm; attribute float iRot, iTint; attribute vec2 iSize;
-      uniform float uPhase, uUprightNear, uCanopyShadow, uFarHillFix;
+      uniform float uPhase, uUprightNear, uCanopyShadow, uFarHillFix, uMobileSoftness;
       varying float vV, vTint, vPatch, vFrontShadow, vWorldX, vWorldZ;
       varying vec3 vN; varying float vFogDepth;
 
@@ -1135,7 +1139,11 @@ let narrowGrassMat = null;
         float alongBlade = smoothstep(0.02, 0.88, v);
         float upright = uUprightNear * frontZone * slope * alongBlade * 0.96;
         vec3 up = normalize(mix(surfaceUp, vec3(0.,1.,0.), upright));
-        vec3 helper = abs(up.y) < 0.985 ? vec3(0.,1.,0.) : vec3(1.,0.,0.);
+        // A helper selected from the changing tip direction can switch axes
+        // halfway up a blade, twisting its ribbon into a dark angular channel.
+        // On phones, choose it once from the root and keep the frame continuous.
+        float helperY = mix(up.y, surfaceUp.y, uMobileSoftness);
+        vec3 helper = abs(helperY) < 0.985 ? vec3(0.,1.,0.) : vec3(1.,0.,0.);
         vec3 t = normalize(cross(helper, up));
         vec3 b = cross(up, t);
         float c = cos(iRot), s = sin(iRot);
@@ -1150,7 +1158,8 @@ let narrowGrassMat = null;
         vFrontShadow = uUprightNear * uCanopyShadow
                      // Reach full strength before the copy block so the same
                      // lane remains visible through the closest bottom rim.
-                     * smoothstep(0.70, 3.25, iPos.z);
+                     * smoothstep(0.70, 3.25, iPos.z)
+                     * (1.0 - uMobileSoftness);
 
         // The rear-centre hill is seen almost head-on, so the ordinary broad
         // wind wave stacks thousands of blades into coherent screen-space
@@ -1183,7 +1192,7 @@ let narrowGrassMat = null;
       varying float vV, vTint, vPatch, vFrontShadow, vWorldX, vWorldZ, vFogDepth;
       varying vec3 vN;
       uniform vec3 uLight, uBase, uTip, uFogColor;
-      uniform float uFogNear, uFogFar, uCanopyShadow, uFarHillFix;
+      uniform float uFogNear, uFogFar, uCanopyShadow, uFarHillFix, uUprightNear, uMobileSoftness;
       void main(){
         vec3 n = normalize(vN);
         if (!gl_FrontFacing) n = -n;
@@ -1191,6 +1200,8 @@ let narrowGrassMat = null;
         float centerHill = uFarHillFix
           * (1.0 - smoothstep(18.0, 32.0, abs(vWorldX)))
           * (1.0 - smoothstep(0.0, 6.0, vWorldZ));
+        float mobileNear = uMobileSoftness * uUprightNear
+          * smoothstep(1.0, 4.5, vWorldZ);
         // Per-blade tint alone gives an even "fur". Keep that variation on
         // the repaired hill, but narrow its value range so random clusters do
         // not resolve as dark vertical columns after depth-of-field blur.
@@ -1201,6 +1212,7 @@ let narrowGrassMat = null;
         // Per-blade tint, lighting and wind still keep it naturally varied,
         // but there is no coherent field left that can form straight lanes.
         float regularPatch = 0.80 + 0.34*vPatch;
+        regularPatch = mix(regularPatch, 1.0, mobileNear*0.45);
         float softHillPatch = 1.0;
         col *= mix(regularPatch, softHillPatch, centerHill);
         // Match the lighter surrounding meadow. This is deliberately a
@@ -1246,13 +1258,13 @@ let narrowGrassMat = null;
         col *= 1.0 - overlapShadow*0.30;
         float ndl  = max(dot(n, uLight), 0.0);
         float back = max(dot(n, -uLight), 0.0);
-        float bladeLight = 0.58 + 0.62*ndl;
+        float bladeLight = mix(0.58, 0.72, mobileNear) + mix(0.62, 0.48, mobileNear)*ndl;
         float calmHillLight = 0.90 + 0.14*ndl;
         col *= mix(bladeLight, calmHillLight, centerHill);
         // Light coming through the blade from behind — the tips glowing is the
         // single detail that separates real grass from green sticks.
         col += uTip * back * 0.42 * pow(vV, 2.2);
-        float rootShade = mix(0.42, 1.0, smoothstep(0.0, 0.55, vV));
+        float rootShade = mix(mix(0.42, 0.64, mobileNear), 1.0, smoothstep(0.0, 0.55, vV));
         float calmHillRoot = mix(0.76, 1.0, smoothstep(0.0, 0.55, vV));
         col *= mix(rootShade, calmHillRoot, centerHill);
         float f = smoothstep(uFogNear, uFogFar, vFogDepth);
@@ -1769,7 +1781,10 @@ const flutters = [];
    The cheapest layer and the most convincing: something soft and dark in front
    of you is what tells the brain it is inside the space, not looking at a picture. */
 const fg = [];
-{
+// Phone depth-of-field already softens the dense real grass. These oversized
+// transparent billboards cannot supply their own depth and appear as dark
+// vertical wedges over it, so retain this decorative layer only on desktop.
+if (!mobileMeadow) {
   const geo = new THREE.PlaneGeometry(1,1);
   geo.translate(0, 0.5, 0);
   for (let i=0;i<Q.fg;i++){
@@ -2180,14 +2195,16 @@ function resize(){
       LOOK_BASE.y = CAM_BASE.y + (logoRestY() - CAM_BASE.y)
         * CAM_BASE.z / (CAM_BASE.z - LOGO_Z);
     }
-    // Portrait fills the lower two thirds with turf that starts much closer to
-    // the lens, so the same near range that keeps landscape crisp throws the
-    // whole foreground out of focus. Widen it until only the ridges soften.
-    dofPass.material.uniforms.uNearRange.value = 16.0;
+    // Keep the established desktop portrait focus range. Phones expose wider
+    // low-tier blades close to the lens, so retain a softer foreground there.
+    dofPass.material.uniforms.uNearRange.value = mobileMeadow ? 9.0 : 16.0;
   } else {
     camera.fov = 38; CAM_BASE.set(0, 0.95, 7.5); LOOK_BASE.set(0, 0.80, 0);
     dofPass.material.uniforms.uNearRange.value = 9.0;
   }
+  // The closer phone turf needs a broader soft-focus footprint. The candy is
+  // rendered separately at full size, so this does not soften its lettering.
+  dofPass.material.uniforms.uMaxCoc.value = mobileMeadow ? 0.012 : 0.010;
   camera.updateProjectionMatrix();
 
   // Retina-sized windows otherwise allocate several multi-million-pixel HDR

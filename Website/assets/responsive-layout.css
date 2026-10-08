@@ -338,6 +338,16 @@
   #missionStory .mission-line:nth-child(2),#missionStory .mission-line:nth-child(4) { --mission-size:23px; }
   .pdp-panel { grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr); gap:24px; padding:28px; }
 }
+/* A rotated phone must show its opening and actions without first scrolling
+   through the logo's sinking handoff. Reserve one compact bottom reading band. */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:520px) {
+  #hero { height:100svh; min-height:0; }
+  #hero .hero-tagline { bottom:max(16px,env(safe-area-inset-bottom)); }
+  #hero .hero-copy .lead { font-size:15px; line-height:1.4; max-width:none; transform:none; }
+  #hero .hero-cta { margin-top:10px; gap:10px; transform:none; }
+  #hero .hero-cta .btn { min-height:44px; font-size:15px; line-height:20px; padding:12px 20px; }
+  #hero .scroll-hint { display:none; }
+}
 @media (prefers-reduced-motion:reduce) and (max-width:1199px) {
   #missionStory .mission-line:first-child { width:100%; }
   #tray .tray-glass,#tray .tray-feature-media,#tray .tray-feature-copy > :not(.tray-feature-facts),#tray .tray-feature-facts > li { opacity:1; transition:none; }

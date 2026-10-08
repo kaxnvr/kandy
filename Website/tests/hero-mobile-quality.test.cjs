@@ -145,3 +145,96 @@ test('touch scrolling does not steer the meadow camera while mouse parallax rema
   callbacks.pointermove({pointerType:'mouse',clientX:300,clientY:200});
   assert.deepEqual(context.ptr,{x:.5,y:-.5});
 });
+
+test('a phone blade keeps the same helper axis as its tip straightens', () => {
+  const expression = meadow.match(/float helperY = ([^;]+);/)?.[1];
+  assert.ok(expression, 'shader exposes its helper-axis reference');
+  const mix = (a,b,t) => a*(1-t)+b*t;
+  const helperAt = (tipY,rootY,mobile) => vm.runInNewContext(expression, {
+    up:{y:tipY}, surfaceUp:{y:rootY}, uMobileSoftness:mobile, mix,
+  });
+  // At the real near-rim root (x=0,z=5), straightening crosses .985.
+  // The former per-vertex helper switched Y -> X inside this one ribbon.
+  const rootY = Math.sqrt(6.6**2 - 5**2) / 6.6;
+  const tipDirections = [rootY,.8136,.9886,.99953];
+  const axis = y => Math.abs(y) < .985 ? 'Y' : 'X';
+  assert.deepEqual(tipDirections.map(y => axis(helperAt(y,rootY,1))), ['Y','Y','Y','Y']);
+  assert.deepEqual(tipDirections.map(y => axis(helperAt(y,rootY,0))), ['Y','Y','X','X'],
+    'the approved desktop shader uses exactly its existing reference');
+});
+
+test('mobile near-root shading is gentler without changing grass tips or desktop roots', () => {
+  const expression = meadow.match(/float rootShade = ([^;]+);/)?.[1];
+  assert.ok(expression);
+  const mix = (a,b,t) => a*(1-t)+b*t;
+  const smoothstep = (a,b,x) => {
+    const t = Math.max(0,Math.min(1,(x-a)/(b-a)));
+    return t*t*(3-2*t);
+  };
+  const shade = (vV,mobileNear) => vm.runInNewContext(expression,{vV,mobileNear,mix,smoothstep});
+  assert.equal(shade(0,0),.42);
+  assert.ok(shade(0,1) > shade(0,0));
+  assert.ok(shade(.2,1) > shade(.2,0));
+  assert.equal(shade(1,1),1);
+  assert.equal(shade(1,0),1);
+});
+
+test('phone turf gains near blur while desktop and landscape camera coordinates remain exact', () => {
+  const start = meadow.indexOf('  if (camera.aspect < 0.92){');
+  const end = meadow.indexOf('  camera.updateProjectionMatrix();',start);
+  const source = meadow.slice(start,end);
+  const vector = () => ({set(x,y,z){ this.x=x; this.y=y; this.z=z; }});
+  for (const [aspect,mobile] of [[.56,true],[.56,false],[2.17,true],[1.75,false]]) {
+    const context = {camera:{aspect},mobileMeadow:mobile,
+      CAM_BASE:vector(),LOOK_BASE:vector(),centeredPhoneLogo:{matches:false},
+      dofPass:{material:{uniforms:{uNearRange:{value:0},uMaxCoc:{value:0}}}},
+    };
+    vm.runInNewContext(source,context);
+    const {camera,CAM_BASE:c,LOOK_BASE:l,dofPass}=context;
+    assert.deepEqual([camera.fov,c.x,c.y,c.z,l.x,l.y,l.z], aspect < .92
+      ? [52,0,1.15,8.7,0,-.35,0] : [38,0,.95,7.5,0,.8,0]);
+    assert.equal(dofPass.material.uniforms.uNearRange.value, aspect < .92 && !mobile ? 16 : 9);
+    assert.equal(dofPass.material.uniforms.uMaxCoc.value,mobile ? .012 : .010);
+  }
+});
+
+
+test('mobile uses real grass without the oversized foreground billboard layer', () => {
+  const start = meadow.indexOf('const fg = [];');
+  const end = meadow.indexOf('/* ═',start);
+  assert.ok(start >= 0 && end > start);
+  const foregroundSource = meadow.slice(start,end);
+  for (const mobileMeadow of [true,false]) {
+    let geometries = 0;
+    const added = [];
+    const context = {mobileMeadow,Q:{fg:7},blurBladeTex:{},scene:{add(mesh){added.push(mesh);}},
+      THREE:{DoubleSide:2,
+        PlaneGeometry:class {constructor(){geometries++;} translate(){}},
+        MeshBasicMaterial:class {constructor(options){Object.assign(this,options);}},
+        Mesh:class {
+          constructor(geometry,material){this.geometry=geometry;this.material=material;
+            this.scale={set(){}};this.position={set(){}};}
+        },
+      },
+    };
+    const count = vm.runInNewContext(foregroundSource+'\nfg.length;',context);
+    assert.equal(count,mobileMeadow ? 0 : 7);
+    assert.equal(added.length,count);
+    assert.equal(geometries,mobileMeadow ? 0 : 1);
+  }
+});
+
+test('mobile removes coherent foreground shadow lanes while keeping the desktop mask', () => {
+  const expression = meadow.match(/vFrontShadow = ([\s\S]*?);/)?.[1];
+  assert.ok(expression);
+  const smoothstep = (a,b,x) => {
+    const t = Math.max(0,Math.min(1,(x-a)/(b-a)));
+    return t*t*(3-2*t);
+  };
+  for (const canopy of [.85,.65]) for (const z of [1,2,3.25,5]) {
+    const context = {uUprightNear:1,uCanopyShadow:canopy,iPos:{z},smoothstep,uMobileSoftness:1};
+    assert.equal(vm.runInNewContext(expression,context),0);
+    context.uMobileSoftness=0;
+    assert.equal(vm.runInNewContext(expression,context),canopy*smoothstep(.70,3.25,z));
+  }
+});
