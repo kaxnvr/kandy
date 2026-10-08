@@ -1,0 +1,55 @@
+/* 2026-09-24 iteration: match the fridge layer to the neighbouring
+   collection panel, and give the reviews one extra quiet beat. */
+@media (min-width:641px) {
+  #trayPlane {
+    width:min(var(--collection-panel-width,1340px),calc(100vw - var(--gutter) * 2));
+  }
+  #trayPlane .tray-surface {
+    --tray-inset-y:82px;
+    box-sizing:border-box;
+    height:var(--collection-panel-height,682px);
+    padding:44px 32px 38px;
+  }
+  #trayPlane .tray-feature {
+    height:100%;
+    /* Fit the whole portrait inside the existing frame. The copy receives
+       the remaining width instead of making the photo crop to its height. */
+    grid-template-columns:min(540px,44%,calc((var(--collection-panel-height,682px) - var(--tray-inset-y)) * 1127 / 1396)) minmax(0,1fr);
+    gap:clamp(28px,5vw,72px);
+    align-items:center;
+  }
+  #trayPlane .tray-feature-media {
+    width:100%; height:auto; aspect-ratio:1127 / 1396;
+    margin:0; justify-self:start; align-self:center;
+  }
+  #trayPlane .tray-feature-copy { padding:clamp(8px,1.5vh,18px) 0; }
+  #trayPlane .eyebrow { font-size:12px; }
+  #trayPlane .tray-feature-copy h2 {
+    margin-top:10px; font-size:clamp(28px,3.5vw,48px); line-height:1.08;
+  }
+  #trayPlane .tray-feature-lead { margin-top:20px; font-size:17px; line-height:1.58; }
+  #trayPlane .tray-feature-facts { gap:10px; margin-top:26px; }
+  #trayPlane .tray-feature-facts li { padding:14px 12px; }
+  #trayPlane .tray-feature-facts b { font-size:22px; }
+  #trayPlane .tray-feature-facts span { font-size:11px; line-height:1.3; }
+  #trayPlane .tray-feature-note { margin-top:22px; font-size:13px; line-height:1.55; }
+  #trayPlane .tray-feature-actions { gap:8px 20px; margin-top:24px; }
+  #trayPlane .tray-feature-actions .btn { font-size:16px; min-height:44px; padding-block:10px; }
+  #trayPlane .tray-feature-actions .small { font-size:13px; }
+}
+
+/* Keep the exact matched frame on short desktop viewports while tightening
+   only the internal type rhythm, as the neighbouring collection already does. */
+@media (min-width:900px) and (max-height:800px) {
+  #trayPlane .tray-surface { --tray-inset-y:56px; padding:28px; }
+  #trayPlane .tray-feature-copy h2 { font-size:34px; }
+  #trayPlane .tray-feature-lead { margin-top:14px; font-size:14px; }
+  #trayPlane .tray-feature-facts { margin-top:16px; }
+  #trayPlane .tray-feature-note { margin-top:14px; font-size:12px; }
+  #trayPlane .tray-feature-actions { margin-top:14px; }
+}
+
+.testimonials { padding-top:calc(var(--chapter-gap) + 32px); }
+@media (max-width:834px) {
+  .testimonials { padding-top:calc(var(--chapter-gap) + 24px); }
+}

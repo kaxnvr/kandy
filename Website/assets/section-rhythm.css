@@ -1,0 +1,66 @@
+/* 2026-09-24: one content-to-content rhythm, How it's made → Find us.
+   Isolated from the approved materials, internal layouts and motion. */
+:root { --chapter-gap:160px; }
+
+/* The pinned process panel already has empty space beneath its last line.
+   Subtract that space instead of stacking a second section-sized gap on it. */
+#stats,
+.garden-journey.journey-enabled + #stats {
+  margin-top:calc(var(--chapter-gap) - var(--process-tail-clearance,0px) + var(--stats-center-offset,0px));
+  padding-top:0;
+  padding-bottom:0;
+  /* The rising cards extend 32px below this padding-free section. Keep their
+     rounded lower corners visible for the entire entrance. */
+  overflow:visible;
+}
+
+/* Statistics + the anchored receipt are a single composition. Keep the full
+   unrolled paper footprint; cancel only the extra floating animation runway.
+   ReceiptUnroll includes a 140px invisible safety pad in its track height. */
+#receipt #receipt-track,
+.garden-journey.journey-enabled + #stats + #receipt #receipt-track {
+  /* Move the cards/paper within this interlude, without moving About or any
+     following chapter. The card row, not the long paper, is the centre. */
+  margin-bottom:calc(-1 * var(--ru-flow-overlap,0px) - 140px + var(--chapter-gap) - var(--stats-center-offset,0px));
+}
+#story { margin-top:0; padding-top:0; padding-bottom:0; }
+.testimonials { padding-top:var(--chapter-gap); }
+#stores.stores-mist { padding-top:var(--chapter-gap); }
+
+/* Saved from the user's position panel (baseline 20261001-about-lift-4):
+   stats + paper -116px; About and every following chapter -240px.
+   Only desktop positions change; all component sizes and portrait flow stay. */
+@media (min-width:835px) and (min-aspect-ratio:1/1) and (pointer:fine) {
+  :root {
+    --layout-saved-stats-y:-116px;
+    --layout-saved-about-y:-260px;
+    --layout-saved-about-flow:-240px;
+  }
+  #stats, #receipt { position:relative; top:var(--layout-saved-stats-y); }
+  /* Move the section's clipping box with its contents. Relative placement
+     preserves About's chosen lift; the bottom margin closes the old vacancy
+     and carries reviews, stores, correspondence and footer up with it. */
+  #story.story {
+    margin-top:-20px; padding-bottom:20px;
+    top:var(--layout-saved-about-y);
+    margin-bottom:var(--layout-saved-about-flow);
+  }
+}
+
+/* Desktop cards + anchored paper: the first 24px lift included About.
+   The additional 20px lifts only this interlude; compensate its lower flow
+   edge to preserve About, all component sizes and portrait spacing. */
+@media (min-width:1200px) and (min-aspect-ratio:1/1) and (pointer:fine) {
+  #stats,
+  .garden-journey.journey-enabled + #stats {
+    margin-top:calc(var(--chapter-gap) - var(--process-tail-clearance,0px) + var(--stats-center-offset,0px) - 44px);
+  }
+  #receipt #receipt-track,
+  .garden-journey.journey-enabled + #stats + #receipt #receipt-track {
+    margin-bottom:calc(-1 * var(--ru-flow-overlap,0px) - 140px + var(--chapter-gap) - var(--stats-center-offset,0px) + 20px);
+  }
+}
+
+@media (max-width:834px) {
+  :root { --chapter-gap:96px; }
+}

@@ -1,0 +1,49 @@
+/* Keep backdrop-filter ancestors opaque. Fade the glass and its sibling
+   content together; reversible transitions also handle a mid-fade scroll. */
+.tray-plane { will-change:transform; }
+@media (prefers-reduced-motion:no-preference) {
+  .tray-sec .tray-sticky { transition:visibility 0s; }
+  /* On reverse scroll, keep the card at its fixed reading position until
+     its leaves finish fading. The outer layer must never cut them off. */
+  .tray-sec.tray-before .tray-sticky {
+    position:fixed; inset:0 0 auto; z-index:60;
+    opacity:1; visibility:hidden; pointer-events:none;
+    transition:visibility 0s linear 1000ms;
+  }
+  .tray-sec.tray-before .tray-plane { pointer-events:none; }
+  .tray-sec .tray-plane {
+    transform-origin:50% 50%;
+    transform:scale(.98);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0),0 16px 36px -28px rgba(33,45,35,0);
+    transition:transform 1000ms cubic-bezier(.25,.1,.25,1),box-shadow 1000ms cubic-bezier(.25,.1,.25,1);
+  }
+  .tray-sec.tray-revealed .tray-plane {
+    animation:none; transform:none; box-shadow:var(--shadow-panel);
+  }
+  /* Fact tiles have their own filters, so their list remains fully opaque. */
+  .tray-sec .tray-glass,
+  .tray-sec .tray-feature-media,
+  .tray-sec .tray-feature-copy > :not(.tray-feature-facts),
+  .tray-sec .tray-feature-facts > li {
+    opacity:0;
+    transition:opacity 1000ms cubic-bezier(.25,.1,.25,1);
+  }
+  .tray-sec.tray-revealed .tray-glass,
+  .tray-sec.tray-revealed .tray-feature-media,
+  .tray-sec.tray-revealed .tray-feature-copy > :not(.tray-feature-facts),
+  .tray-sec.tray-revealed .tray-feature-facts > li {
+    opacity:1; animation:none;
+  }
+}
+/* Leave more of the surrounding mission copy visible on desktop.
+   Independent scale preserves the existing 98%-100% entrance animation. */
+@media (min-width:900px) {
+  #trayPlane { scale:.86; transform-origin:50% 50%; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .tray-sec.tray-revealed .tray-plane,
+  .tray-sec.tray-revealed .tray-glass,
+  .tray-sec.tray-revealed .tray-feature-media,
+  .tray-sec.tray-revealed .tray-feature-copy > :not(.tray-feature-facts),
+  .tray-sec.tray-revealed .tray-feature-facts > li { animation:none; }
+}

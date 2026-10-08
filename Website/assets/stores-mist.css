@@ -1,0 +1,188 @@
+/* KANDy Find Us — approved v8 monochrome mist field.
+   Intentionally scoped to #stores so the rest of the production page keeps
+   its existing spacing, materials, typography and motion. */
+#stores.stores-mist {
+  position: relative;
+  overflow: clip;
+  background: transparent;
+}
+
+#stores .stores-mist-head {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+#stores .air-field {
+  position: relative;
+  width: min(1100px, 100%);
+  height: clamp(630px, 72svh, 760px);
+  margin: 28px auto 0;
+  background: transparent;
+  isolation: isolate;
+  cursor: pointer;
+}
+
+#stores .air-mist-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#stores .air-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 306px;
+  height: 196px;
+  margin: -98px 0 0 -153px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#stores .air-copy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 8px;
+  pointer-events: none;
+}
+
+#stores .city,
+#stores .flavour,
+#stores .hours {
+  transform-origin: 50% 50%;
+}
+
+#stores .word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+#stores .glyph {
+  display: inline-block;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* White light only: no grey card, colour block or visible backplate. */
+#stores .air-halo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(255, 255, 255, .64) 0%,
+    rgba(255, 255, 255, .24) 26%,
+    rgba(255, 255, 255, .07) 45%,
+    transparent 74%
+  );
+  filter: blur(48px);
+  opacity: .7;
+}
+
+/* The approved layout is unchanged; only its floating location type is
+   reduced so the layers feel lighter inside the full website. */
+#stores .city {
+  display: block;
+  font: 400 34px/1.2 'Marcellus', Georgia, serif;
+  letter-spacing: -.015em;
+  color: #555;
+}
+
+#stores .flavour {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  font: 400 15px/1.5 'Lato', sans-serif;
+  color: #616161;
+  text-wrap: balance;
+}
+
+#stores .hours {
+  display: block;
+  margin-top: 9px;
+  font: 400 12px/1.5 'Lato', sans-serif;
+  color: #666;
+}
+
+#stores .air-node:focus-visible {
+  outline: none;
+}
+
+#stores .air-node:focus-visible .air-copy::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: calc(50% - 18px);
+  width: 36px;
+  height: 1px;
+  background: #777;
+}
+
+#stores .interaction-hint {
+  position: relative;
+  z-index: 2;
+  margin: 10px auto 0;
+  text-align: center;
+  font-size: 12px;
+  color: #757575;
+  letter-spacing: .015em;
+}
+
+@media (max-width: 1000px) and (min-width: 701px) {
+  #stores .air-node {
+    width: 278px;
+    height: 182px;
+    margin: -91px 0 0 -139px;
+  }
+
+  #stores .city { font-size: 32px; }
+}
+
+@media (max-width: 700px) {
+  #stores { padding-left: 18px; padding-right: 18px; }
+
+  #stores .h-section {
+    max-width: 13ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #stores .air-field {
+    height: 1080px;
+    margin-top: 24px;
+  }
+
+  #stores .air-node {
+    width: 256px;
+    height: 176px;
+    margin: -88px 0 0 -128px;
+  }
+
+  #stores .city { font-size: 29px; }
+  #stores .flavour { font-size: 14px; }
+  #stores .hours { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #stores .glyph,
+  #stores .air-copy { will-change: auto; }
+}

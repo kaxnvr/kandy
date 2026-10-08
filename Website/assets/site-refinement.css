@@ -1,0 +1,361 @@
+/* Approved whole-site refinement, 2026-09-22.
+   Proportions and rhythm only: the 75% / 48px material remains tunable. */
+:root {
+  --section-title:clamp(30px,3vw,42px);
+  --editorial-title:clamp(30px,2.7vw,38px);
+  --radius-panel:30px;
+  --newsletter-tail-gap:64px;
+  --r-card:20px;
+  --ink-3:#62645e;
+  --shadow-panel:inset 0 1px 0 rgba(255,255,255,.8),0 16px 36px -28px rgba(33,45,35,.26);
+  --shadow-card:inset 0 1px 0 rgba(255,255,255,.8),0 9px 20px -16px rgba(33,45,35,.25);
+  --glass-lift:var(--shadow-card);
+  --glass-lift-hi:inset 0 1px 0 #fff,0 14px 26px -17px rgba(33,45,35,.3);
+}
+
+/* A translucent navigation capsule with a softly frosted view of the garden. */
+#nav > .nav-inner.lg {
+  background:linear-gradient(135deg,rgba(255,255,255,.65),rgba(246,251,248,.38) 55%,rgba(255,255,255,.51));
+  -webkit-backdrop-filter:blur(20px) saturate(125%);
+  backdrop-filter:blur(20px) saturate(125%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(255,255,255,.28),0 12px 28px -18px rgba(35,54,40,.38);
+}
+
+/* Clean meadow edge: no feather or mask on the hero. */
+#heroScrollStage,#hero.hero { background:transparent; }
+#heroGL {
+  -webkit-mask-image:none;
+  mask-image:none;
+}
+.scroll-hint { text-shadow:0 1px 8px rgba(20,35,27,.65); }
+/* A clear frosted letter lets the garden colour softly show through. */
+.cta > .newsletter-letter {
+  background:linear-gradient(135deg,rgba(255,255,255,.52),rgba(248,251,250,.25) 55%,rgba(255,255,255,.40));
+  -webkit-backdrop-filter:blur(20px) saturate(115%);
+  backdrop-filter:blur(20px) saturate(115%);
+}
+
+/* Reading hierarchy. No new font or unrelated recolouring. */
+/* Restore the moving ribbon inside its existing handoff footprint, so the
+   falling letters keep their established release point and timing. */
+.marquee.hero-handoff-anchor {
+  top:-1px; height:auto; min-height:100px; margin:0; padding:0; border:0;
+  background:transparent; overflow:hidden; visibility:visible;
+  display:flex; align-items:flex-start;
+}
+.marquee.hero-handoff-anchor::before {
+  content:""; position:absolute; left:0; right:0; top:0; height:50px;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(231,233,235,.44),rgba(224,227,230,.22) 52%,rgba(233,235,237,.34));
+  -webkit-backdrop-filter:blur(14px) saturate(125%);
+  backdrop-filter:blur(14px) saturate(125%);
+  border-top:1px solid rgba(255,255,255,.76);
+  border-bottom:1px solid rgba(73,96,82,.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(255,255,255,.35),0 4px 12px -8px rgba(36,55,42,.24);
+}
+.hero-handoff-anchor .marquee-track {
+  position:relative; z-index:1; gap:0; margin-top:14px;
+  animation:scrollx var(--marquee-duration,42s) linear infinite;
+}
+.hero-handoff-anchor .marquee-track span {
+  color:#36483b; font-size:15px; line-height:22px; font-weight:700;
+  letter-spacing:.07em; text-transform:uppercase; opacity:1;
+}
+.hero-handoff-anchor .marquee-group > span:nth-child(even) { color:#b88745; font-size:16px; opacity:.85; }
+.hero-handoff-anchor .marquee-group {
+  display:flex; align-items:center; justify-content:flex-start; flex:none;
+  gap:28px; min-width:0; padding:0 14px;
+}
+/* Let native sticky own the entire vertical entrance. A JS counter-shift
+   trails compositor scrolling and snaps back when sticky reaches top:0. */
+#missionStory .mission-pin { translate:none; }
+@media(max-width:640px) {
+  .marquee.hero-handoff-anchor { min-height:80px; }
+  .marquee.hero-handoff-anchor::before { height:42px; }
+  .hero-handoff-anchor .marquee-track { margin-top:10px; }
+  .hero-handoff-anchor .marquee-track span { font-size:13px; }
+  .hero-handoff-anchor .marquee-group { gap:20px; padding:0 10px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .marquee.hero-handoff-anchor { margin-bottom:0; }
+  .hero-handoff-anchor .marquee-track { animation:none; transform:none; }
+  #missionStory .mission-pin { translate:none; }
+}
+/* Receipt opacity is independent of frame-material tuning and reveal effects. */
+#receipt,
+#receipt-track,
+#receipt-track .ru-sticky,
+#receipt-track .ru-frame,
+#receipt-track .ru-canvas { opacity:1 !important; }
+
+.h-section,
+.journey-enabled #products .h-section,
+.story-copy .h-section { font-size:var(--section-title); line-height:1.15; letter-spacing:-.018em; }
+.lead { font-size:18px; line-height:1.6; letter-spacing:0; }
+.eyebrow { font-size:12px; letter-spacing:.09em; }
+.small { font-size:13px; line-height:1.55; letter-spacing:0; }
+.tray-feature-copy h2 { font-size:var(--editorial-title); line-height:1.15; max-width:18ch; }
+.tray-feature-lead,.story-copy .lead { font-size:17px; line-height:1.65; }
+.tray-feature-note { font-size:14px; line-height:1.6; }
+.tray-feature-facts span { font-size:12px; line-height:1.4; }
+.tray-feature-actions { flex-wrap:wrap; gap:8px 20px; }
+.tray-feature-actions .btn { padding-left:0; font-size:16px; }
+.process-editorial p,
+.journey-enabled #process .process-editorial p { font-size:15px; line-height:1.6; }
+.step-text::before,.step-emblem::after { font-size:12px; letter-spacing:.08em; line-height:1.3; }
+.step-card h3,.journey-enabled #process .step-card h3 { font-size:26px; }
+.stars-pill .rating { font-size:12px; }
+.foot-col a,.foot-brand p { font-size:13px; line-height:1.8; }
+
+/* Two surface scales: framed chapters and small functional cards. */
+#products > .wrap,.tray-plane,.tray-glass,.cta > .newsletter-letter,.pdp-panel {
+  border-radius:var(--radius-panel);
+  box-shadow:var(--shadow-panel);
+}
+.tray-feature-media,.story-art { border-radius:var(--r-card); box-shadow:var(--shadow-card); }
+.tray-feature-media { margin-left:0; }
+.tray-feature-facts li {
+  border-radius:12px; box-shadow:var(--shadow-card);
+  background:rgba(255,255,255,calc(var(--ui-frame-white,.75) * .88));
+}
+/* A smaller middle layer leaves room for the letters and the story behind it.
+   Real layout dimensions, not a transform: entrance and handoff remain equal
+   in size, and text/buttons keep their native rendering and hit areas. */
+@media (min-width:641px) {
+  #trayPlane { width:min(760px,calc(100vw - var(--gutter) * 2)); }
+  #trayPlane .tray-surface { padding:24px; }
+  #trayPlane .tray-feature { grid-template-columns:minmax(0,.84fr) minmax(0,1.16fr); gap:28px; }
+  #trayPlane .tray-feature-media {
+    width:100%; height:auto; aspect-ratio:3 / 4; align-self:center; transform:none;
+  }
+  #trayPlane .tray-feature-copy { padding:0; }
+  #trayPlane .eyebrow { font-size:10px; }
+  #trayPlane .tray-feature-copy h2 { font-size:28px; line-height:1.15; margin-top:8px; }
+  #trayPlane .tray-feature-lead { font-size:14px; line-height:1.55; margin-top:14px; }
+  #trayPlane .tray-feature-facts { gap:8px; margin-top:18px; }
+  #trayPlane .tray-feature-facts li { padding:10px 8px; }
+  #trayPlane .tray-feature-facts b { font-size:20px; }
+  #trayPlane .tray-feature-facts span { font-size:10px; line-height:1.4; }
+  #trayPlane .tray-feature-note { font-size:12px; line-height:1.55; margin-top:16px; }
+  #trayPlane .tray-feature-actions { gap:6px 16px; margin-top:16px; }
+  #trayPlane .tray-feature-actions .btn { font-size:14px; min-height:44px; padding-block:10px; }
+  #trayPlane .tray-feature-actions .small { font-size:10px; }
+}
+#stats .stat.lg,.t-card,.t-card:hover { box-shadow:var(--shadow-card); }
+.t-card .sheen,.stat.lg::after,.t-card.lg::after { display:none; }
+.stars-pill { box-shadow:none; }
+.t-avatar { box-shadow:0 3px 8px -5px rgba(33,45,35,.3); }
+
+/* Product display: a smaller frame, larger photographs and an open idle hand.
+   No parent scale: hit targets and overflow now match the visible geometry. */
+#products { padding:72px 24px; }
+#products > .wrap {
+  max-width:1340px;
+  padding:44px 32px 38px;
+}
+#products .lead { max-width:46ch; margin-inline:auto; }
+.journey-enabled #products,
+.journey-enabled #process { align-items:center; padding:calc(var(--nav-h) + 32px) 24px 32px; }
+.journey-enabled #products > .wrap {
+  height:auto; max-width:1340px; gap:42px; padding:44px 32px 38px; overflow:visible;
+}
+.fan-deck-wrap { margin-top:42px; }
+.fan-deck,.journey-enabled #products .fan-deck {
+  --fan-gap:clamp(222px,12vw,240px);
+  height:360px; max-width:1180px; transform:none;
+}
+.journey-enabled #products .fan-deck-wrap { zoom:1; }
+.fan-card {
+  width:210px; min-height:326px; padding:24px 18px 20px;
+  --glass-lift:inset 0 1px 0 rgba(255,255,255,.85),0 12px 24px -16px rgba(33,35,31,.32);
+  --glass-lift-hi:inset 0 1px 0 #fff,0 18px 30px -18px rgba(33,35,31,.4);
+  transform:translate(calc(-50% + var(--i) * var(--fan-gap) * .98),calc(var(--ai) * 10px)) rotate(calc(var(--i) * 1.4deg));
+  transition:transform .7s cubic-bezier(.22,.6,.25,1),box-shadow .5s var(--ease);
+}
+.fan-card.fan-hero { --glass-lift:inset 0 1px 0 rgba(255,255,255,.22),0 14px 28px -16px rgba(33,29,24,.38); }
+.fan-deck.is-open .fan-card,.fan-deck:has(.fan-card:focus-visible) .fan-card {
+  transform:translate(calc(-50% + var(--i) * var(--fan-gap)),calc(var(--ai) * 10px)) rotate(calc(var(--i) * 1.8deg));
+}
+.fan-deck.is-open .fan-card.is-active,.fan-deck.is-open .fan-card:focus-visible,
+.fan-deck:has(.fan-card:focus-visible) .fan-card:focus-visible {
+  transform:translate(calc(-50% + var(--i) * var(--fan-gap)),calc(var(--ai) * 10px - 18px)) rotate(calc(var(--i) * 1.8deg)) scale(1.025) !important;
+}
+.fan-shape { height:166px; margin:4px 0 16px; }
+.fan-product-image { width:124px; }
+.fan-name { font-size:17px; line-height:22px; }
+.fan-flavor { font-size:13px; line-height:20px; }
+.fan-tag { opacity:1; transform:none; font-size:13px; line-height:20px; margin-top:12px; }
+.fan-hint,.journey-enabled #products .fan-hint { margin-top:18px; font-size:13px; line-height:1.5; }
+.fan-card:focus-visible { outline:2px solid var(--citrine-deep); outline-offset:4px; }
+
+/* Stable reading rhythm after the signature opening sequence. */
+.story { padding-bottom:72px; }
+/* About vertical balance: move the image/copy up inside the same section.
+   Transfer the clearance below it so reviews and the receipt stay put. */
+@media (min-width:835px) {
+  #story { padding-top:28px; padding-bottom:108px; scroll-margin-top:64px; }
+}
+/* End about vertical balance. */
+.testimonials { padding-top:64px; }
+.t-wall { max-width:1160px; padding-top:40px; margin-top:0; gap:20px; }
+.t-col { gap:20px; will-change:auto; }
+.t-card { padding:24px; }
+/* Reviews no longer tilt. Keep their contents in the same paint plane so
+   scrolled glass cards cannot lose individual avatar/name compositing layers. */
+.t-card { transform-style:flat; }
+.t-card .t-head,.t-card blockquote,.t-card .t-meta { transform:none; }
+.t-card blockquote { font-size:16px; line-height:1.6; }
+.t-name { font-size:16px; line-height:1.4; }
+.t-meta { font-size:13px; line-height:1.5; }
+#stats { padding-bottom:80px; }
+/* Shift the cards and their anchored receipt inside the existing interlude.
+   Reclaim the same distance below it, keeping both neighbouring chapters put.
+   The receipt's animation, anchor and native mobile spacing stay unchanged. */
+.garden-journey.journey-enabled + #stats {
+  --stats-receipt-nudge:clamp(48px,8vh,80px);
+  margin-top:calc(clamp(-170px,-12vh,-110px) + 230px + var(--stats-receipt-nudge));
+}
+.garden-journey.journey-enabled + #stats + #receipt #receipt-track {
+  margin-bottom:calc(-1 * var(--ru-flow-overlap,0px) - clamp(310px,38vh,450px) - clamp(48px,8vh,80px));
+}
+.stat { padding:26px 16px; }
+.stat .num,.stat .num-static { font-size:clamp(36px,3.8vw,48px); }
+.stat p { font-size:13px; line-height:1.5; }
+#stores.stores-mist { padding-top:72px; }
+.cta { padding-bottom:var(--newsletter-tail-gap); }
+.cta > .newsletter-letter { max-width:1120px; padding:36px clamp(28px,4vw,56px) 44px; }
+.newsletter-columns { margin-top:32px; gap:6%; }
+.cta .newsletter-title { font-size:var(--editorial-title); line-height:1.2; letter-spacing:-.025em; }
+.cta .newsletter-copy .lead { font-size:18px; line-height:1.6; }
+.newsletter-signup { margin-top:24px; }
+.footer { padding-top:40px; }
+/* One continuous fade from the letter's lower edge to the copyright line.
+   Decorative only: footer links and the newsletter keep their own layout. */
+#newsletter + .footer { isolation:isolate; }
+#newsletter + .footer::before {
+  content:""; position:absolute; left:0; right:0;
+  top:calc(-1 * var(--newsletter-tail-gap)); bottom:0;
+  z-index:-1; pointer-events:none;
+  background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.22) 30%,rgba(255,255,255,.72) 68%,
+    #fff calc(100% - 40px),#fff 100%);
+}
+
+/* Quiet the texture under unframed reading, without painting white sections.
+   These feathered local lenses keep the surrounding blue/green and trails. */
+.process-heading,.story-copy,.testimonials > .wrap { isolation:isolate; }
+.journey-enabled #process .process-heading { position:relative; top:auto; }
+/* Chapters share a visual centre, without stretching the collection frame. */
+.journey-enabled #process .process-heading { align-self:center; }
+.journey-enabled #process .process-heading { padding-left:clamp(24px,3vw,64px); }
+.journey-enabled #process > .wrap { padding-block:0; }
+.journey-enabled #process .process-editorial { max-width:48ch; margin-top:28px; }
+.story-copy { position:relative; }
+.process-heading::before,.story-copy::before,.testimonials > .wrap::before {
+  content:""; position:absolute; inset:-40px -48px; z-index:-1; pointer-events:none;
+}
+.process-heading::before {
+  background:rgba(250,252,249,.15);
+  -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  -webkit-mask-image:radial-gradient(ellipse,#000 20%,transparent 72%);
+  mask-image:radial-gradient(ellipse,#000 20%,transparent 72%);
+}
+/* Paint the feather directly so these scrolling reading areas do not need
+   a masked backdrop-filter surface that can briefly expose a rectangle. */
+.story-copy::before,.testimonials > .wrap::before {
+  background:radial-gradient(ellipse,rgba(250,252,249,.15) 20%,rgba(250,252,249,0) 72%);
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+  -webkit-mask-image:none; mask-image:none;
+}
+.testimonials > .wrap { position:relative; }
+
+/* Secondary motion is a quiet entrance, not another performance. */
+.reveal { --rv-y:14px; --rv-z:0px; --rv-rx:0deg; transition:opacity .55s var(--ease),transform .55s var(--ease); }
+.reveal.deep { --rv-y:14px; --rv-z:0px; --rv-rx:0deg; }
+.reveal.in { --rv-y:0px; --rv-z:0px; --rv-rx:0deg; }
+.stat-grow:nth-child(1) { --stat-delay:0ms; }
+.stat-grow:nth-child(2) { --stat-delay:110ms; }
+.stat-grow:nth-child(3) { --stat-delay:220ms; }
+.stat-grow:nth-child(4) { --stat-delay:330ms; }
+/* A soft left-to-right rise; animate the slots, never the receipt anchor.
+   Release the opacity layer afterwards so glass can sample its backdrop. */
+.stats-motion.stats-grown .stat-grow { animation:stat-settle 900ms cubic-bezier(.25,.1,.25,1) var(--stat-delay) backwards; }
+.stats-motion.stats-grown .stat-number-window > span { animation:none; }
+@keyframes stat-settle { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:none; } }
+/* Move only the selected sentence; preserve its depth, blur and shared exit. */
+@media (min-width:735px) {
+  #missionStory .mission-line:nth-child(4) { --mission-left:72%; }
+}
+.a-petal,.a-steam,.a-stamp,.a-lid,.a-bow { animation-play-state:paused; }
+#process.process-motion-active :is(.a-petal,.a-steam,.a-stamp,.a-lid,.a-bow) { animation-play-state:running; }
+.marquee-track { animation-duration:72s; }
+.marquee:hover .marquee-track { animation-play-state:running; }
+
+@media (min-width:900px) and (max-height:800px) {
+  .journey-enabled #products > .wrap { gap:26px; padding:28px 28px 24px; }
+  .journey-enabled #products .h-section { font-size:34px; }
+  .journey-enabled #products .fan-deck { height:300px; }
+  .journey-enabled #products .fan-card { width:190px; min-height:286px; padding:20px 14px 16px; }
+  .journey-enabled #products .fan-shape { height:138px; margin-bottom:12px; }
+  .journey-enabled #products .fan-product-image { width:104px; }
+  .journey-enabled #products .fan-hint { margin-top:12px; }
+  .journey-enabled #process .process-editorial p { font-size:14px; line-height:1.5; }
+}
+@media (max-width:1100px) {
+  .t-card { padding:20px; }
+  .t-card blockquote { font-size:15px; line-height:1.6; }
+  .t-avatar-wrap { width:44px; height:44px; }
+}
+/* A horizontal rail is intentional on tablets too: every package remains
+   reachable rather than half clipped by a desktop fan. */
+@media (max-width:1199px),(hover:none),(pointer:coarse) {
+  .fan-deck,.journey-enabled #products .fan-deck {
+    display:flex; height:auto; max-width:100%; gap:16px; padding:6px 4px 20px;
+    overflow-x:auto; scroll-snap-type:x mandatory; transform:none;
+  }
+  .fan-card { position:relative; top:auto; left:auto; flex:none; width:210px; min-height:326px;
+    scroll-snap-align:center; transform:none !important; z-index:auto !important; }
+  .fan-deck.is-open .fan-card.is-active,.fan-deck.is-open .fan-card:focus-visible,
+  .fan-deck:has(.fan-card:focus-visible) .fan-card:focus-visible {
+    transform:none !important; z-index:auto !important;
+  }
+  .fan-hint { display:none; }
+  #products { padding:56px 20px; }
+  #products > .wrap { padding:32px 24px 20px; }
+  .fan-deck-wrap { margin-top:32px; }
+}
+@media (max-width:820px) {
+  .cta > .newsletter-letter { padding:30px; }
+  .newsletter-columns { gap:24px; }
+  .cta .newsletter-title { font-size:34px; }
+  .process-heading .h-section { max-width:19ch; }
+}
+@media (max-width:700px) {
+  :root { --radius-panel:24px; --section-title:30px; --editorial-title:30px; --newsletter-tail-gap:40px; }
+  .tray-feature-copy h2 { font-size:28px; }
+  .tray-feature-facts span { font-size:12px; }
+  .tray-feature-actions .btn { font-size:15px; }
+  .story { padding-bottom:48px; }
+  .testimonials { padding-top:48px; }
+  .t-wall { padding-top:28px; gap:16px; }
+  .t-card { padding:22px; }
+  .t-name { font-size:16px; }
+  .t-meta { font-size:13px; }
+  .t-card blockquote { font-size:16px; }
+  .newsletter-masthead { gap:12px; }
+  .newsletter-masthead span { font-size:12px; letter-spacing:.1em; text-align:left; }
+  .newsletter-columns { margin-top:26px; }
+  .cta .newsletter-title { font-size:30px; }
+  .cta .newsletter-copy .lead { font-size:17px; }
+  .cta > .newsletter-letter { padding:26px 24px 30px; }
+  .cta { padding-bottom:var(--newsletter-tail-gap); }
+  .footer { padding-top:32px; }
+  .process-heading::before,.story-copy::before,.testimonials > .wrap::before { inset:-24px -18px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .reveal,.reveal.deep { opacity:1; transform:none; transition:none; }
+  .fan-card { transition:none; }
+  .marquee-track { animation:none; }
+  .stats-motion.stats-grown .stat-grow { animation:none; }
+  .step-card :is(.a-petal,.a-steam,.a-stamp,.a-lid,.a-bow) { animation:none; }
+}

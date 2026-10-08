@@ -1,0 +1,328 @@
+/* Responsive-only layer. The approved wide, landscape, fine-pointer desktop
+   remains untouched. Keep this query in sync with garden-journey.js and the
+   compactLayout query in design-a-receipt.html. */
+@media (max-width:1199px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px) {
+  :root {
+    --gutter:clamp(16px,3.2vw,32px);
+    --chapter-gap:clamp(72px,10vw,112px);
+    --section-title:clamp(28px,4.5vw,42px);
+    --editorial-title:clamp(28px,4vw,38px);
+  }
+  body { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  #tray,#products,#process,#stats,#story,#stores,#newsletter,#missionStory {
+    scroll-margin-top:calc(var(--nav-h) + 32px);
+  }
+  #hero { height:100svh; min-height:560px; }
+  .hero-copy .lead { max-width:32ch; font-size:clamp(16px,2.2vw,18px); }
+  .hero-tagline { bottom:max(112px,13%); }
+  .hero-cta { gap:10px; }
+  .hero-cta .btn { min-height:44px; }
+  #nav { top:max(10px,env(safe-area-inset-top)); padding-inline:var(--gutter); }
+  #nav .nav-links a { min-height:44px; display:flex; align-items:center; }
+  /* Keep only the painted ribbon footprint on compact screens. */
+  .marquee.hero-handoff-anchor { min-height:50px; }
+
+  /* Preserve the four-sentence scene, sized to the available portrait area. */
+  #missionStory .mission-copy { max-height:960px; align-self:start; }
+  #missionStory .mission-line:nth-child(1) {
+    --mission-left:30%; --mission-top:24%; --mission-width:16ch;
+    --mission-size:clamp(28px,4.2vw,42px); width:min(46vw,20ch);
+  }
+  #missionStory .mission-line:nth-child(2) {
+    --mission-left:74%; --mission-top:43%; --mission-size:clamp(23px,3.2vw,34px);
+    width:44vw;
+  }
+  #missionStory .mission-line:nth-child(3) {
+    --mission-left:26%; --mission-top:66%; --mission-size:clamp(20px,2.8vw,28px);
+    width:43vw;
+  }
+  #missionStory .mission-line:nth-child(4) {
+    --mission-left:70%; --mission-top:82%; --mission-size:clamp(23px,3.3vw,36px);
+    width:47vw;
+  }
+
+  /* Content drives the height, not the neighbouring desktop panel. No nested
+     scroll area: every paragraph and action stays reachable with one scroll. */
+  #tray.tray-sec { margin-top:0; padding:0 var(--gutter) var(--chapter-gap); }
+  #tray .tray-stage { height:auto; }
+  #tray.tray-sec .tray-sticky {
+    position:relative; inset:auto; height:auto; min-height:0; padding:0;
+    overflow:visible; perspective:none; visibility:visible; opacity:1;
+    pointer-events:auto;
+  }
+  #trayPlane { width:100%; max-width:1060px; scale:none; }
+  #trayPlane .tray-surface { height:auto; padding:clamp(20px,3vw,36px); }
+  #trayPlane .tray-feature {
+    height:auto; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+    gap:clamp(22px,4vw,44px);
+  }
+  #trayPlane .tray-feature-media {
+    width:100%; height:auto; max-width:none; aspect-ratio:1127 / 1396;
+    align-self:center; transform:none; margin:0;
+  }
+  #trayPlane .tray-feature-copy { min-width:0; padding:0; text-align:left; }
+  #trayPlane .eyebrow { font-size:11px; }
+  #trayPlane .tray-feature-copy h2 { font-size:var(--editorial-title); margin:10px 0 0; max-width:22ch; }
+  #trayPlane .tray-feature-lead { display:block; font-size:16px; line-height:1.6; margin-top:18px; }
+  #trayPlane .tray-feature-note { display:block; font-size:13px; margin-top:18px; }
+  #trayPlane .tray-feature-facts { gap:8px; margin-top:20px; }
+  #trayPlane .tray-feature-facts li { padding:12px 9px; min-width:0; }
+  #trayPlane .tray-feature-facts b { font-size:22px; }
+  #trayPlane .tray-feature-facts span { font-size:11px; }
+  #trayPlane .tray-feature-actions { justify-content:flex-start; margin-top:18px; }
+  #trayPlane .tray-feature-actions .small { display:block; font-size:12px; }
+  #trayPlane .tray-feature-actions .btn { font-size:16px; }
+
+  #products { padding:0 var(--gutter) var(--chapter-gap); }
+  #products > .wrap { padding:32px clamp(18px,3vw,32px) 24px; }
+  #products .fan-deck {
+    display:flex; height:auto; max-width:100%; gap:16px; padding:6px 4px 20px;
+    overflow-x:auto; scroll-snap-type:x mandatory; transform:none;
+    scroll-padding-inline:4px; overscroll-behavior-x:contain;
+  }
+  #products .fan-card {
+    position:relative; top:auto; left:auto; flex:none;
+    width:clamp(190px,38vw,230px); min-width:0; min-height:326px;
+    scroll-snap-align:center; transform:none !important; z-index:auto !important;
+  }
+  #products .fan-hint { display:block; }
+  #process { padding:clamp(24px,3vw,40px) 0 var(--chapter-gap); background:transparent; }
+  #process > .wrap { max-width:1120px; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:32px; }
+  #process .process-heading { position:static; }
+  #process .process-heading .h-section { max-width:19ch; }
+  #process .process-editorial { max-width:52ch; margin-top:28px; }
+  #process .step-heading { min-height:68px; padding:18px 22px; }
+  #process .step-reveal { height:auto; }
+  #process .step-reveal-inner {
+    min-height:200px; grid-template-columns:minmax(80px,.6fr) minmax(0,1fr);
+    gap:18px; padding:8px 22px 24px;
+  }
+  #process .step-emblem { min-height:164px; padding-right:16px; }
+  #process .step-emblem svg { width:min(100%,104px); height:auto; aspect-ratio:1; }
+  #process .step-emblem::after { font-size:9px; letter-spacing:.05em; }
+  #process .step-text::before { font-size:10px; margin-bottom:12px; }
+  #process .step-summary { font-size:17px; }
+  #process .step-detail { font-size:14px; }
+  /* Compact stats use the normal chapter gap; receipt projection supplies
+     its own smaller footprint instead of adding half a sheet above stats. */
+  /* Saved desktop lifts also match some narrow landscape windows. Their
+     process is already in normal flow, so the lift would overlap Wrap. */
+  #stats,#receipt { top:0; }
+  #story { padding:0; }
+  #story .story-grid { gap:32px; }
+  #story .story-copy .h-section { font-size:var(--section-title); }
+  #story .story-copy .lead { max-width:48ch; }
+  .testimonials { padding-top:var(--chapter-gap); }
+  .testimonials .t-wall {
+    margin-top:0; padding-top:32px;
+    grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:none;
+    -webkit-mask-image:none; mask-image:none;
+  }
+  .testimonials .t-col { display:contents; }
+  #tWall > .t-col:nth-child(n+3) { display:none; }
+  .testimonials .t-col > .t-card { display:flex; }
+  .testimonials .t-col > .t-card .t-meta { display:block; }
+  /* Keep the first six in compact reading order. Feather the final pair in
+     the two-column layout; the narrow reading list restores them below. */
+  #tWall > .t-col:nth-child(2) > .t-card:nth-child(n+2) {
+    -webkit-mask-image:linear-gradient(to bottom,#000 0 30%,rgba(0,0,0,.82) 52%,rgba(0,0,0,.28) 78%,transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0 30%,rgba(0,0,0,.82) 52%,rgba(0,0,0,.28) 78%,transparent 100%);
+  }
+  #stores.stores-mist { padding-top:var(--chapter-gap); }
+  #newsletter > .newsletter-letter { width:calc(100% - var(--gutter) * 2); }
+  #newsletter .newsletter-email-line input { font-size:16px; }
+  .foot-col a { min-height:36px; display:flex; align-items:center; }
+  .pdp { padding:16px; padding-block:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-bottom)); }
+  .pdp-panel { max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overscroll-behavior:contain; }
+  .pdp-close { width:44px; height:44px; }
+  .pdp-qty button { width:44px; height:44px; }
+  .pdp-buy .btn { min-height:44px; }
+}
+
+@media (max-width:950px) {
+  #process > .wrap { display:block; }
+  #process .process-heading { margin-bottom:56px; }
+  #process .process-editorial { max-width:none; }
+  #process .step-reveal-inner { grid-template-columns:minmax(96px,.35fr) minmax(0,1fr); min-height:180px; }
+  #process .step-emblem { min-height:148px; }
+  .testimonials .t-wall { grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:none; }
+  .testimonials .t-col { display:contents; }
+}
+
+/* The single-column tablet/window photo should be a small editorial image,
+   not a full-width poster. Keep its artwork, 4:3 crop and type unchanged. */
+@media (min-width:701px) and (max-width:834px) and (max-aspect-ratio:1/1) {
+  /* The receipt already ends with a negative margin. A second negative top
+     margin collapses into it, so use relative placement for the actual lift. */
+  #story.story { margin-top:0; top:-56px; margin-bottom:-56px; }
+  #story .story-art { width:min(520px,100%); justify-self:center; }
+}
+
+/* The extra-tall phone layout keeps three reviews: Priya, Marcus and Diego.
+   Other portrait and foldable proportions retain the six-card arrangement. */
+@media (max-width:950px) and (max-aspect-ratio:2/3) {
+  #tWall > .t-col:first-child > .t-card:nth-child(3),
+  #tWall > .t-col:nth-child(2) > .t-card:nth-child(-n+2) {
+    display:none;
+  }
+}
+
+@media (max-width:640px) {
+  .marquee.hero-handoff-anchor { min-height:42px; }
+}
+
+@media (max-width:700px) {
+  /* A little more breathing room around the narrow reading layout. Reuse
+     the shared gutter so cards, copy and navigation keep aligned edges. */
+  :root { --gutter:clamp(24px,5vw,34px); }
+  #trayPlane .tray-feature { grid-template-columns:minmax(0,1fr); gap:24px; }
+  #trayPlane .tray-feature-media { width:min(100%,360px); justify-self:center; }
+  #trayPlane .tray-feature-copy h2 { max-width:none; }
+  #products .fan-deck-wrap { margin-top:28px; }
+  #products { padding-bottom:40px; }
+  #stats .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  #stats .stat { padding:24px 10px; }
+  #stats .stat p { font-size:12px; }
+  /* Narrow screens read directly from the stats into About: no decorative
+     paper and no leftover runway from its desktop scroll animation. */
+  #receipt { display:none; }
+  #story.story { margin-top:var(--chapter-gap); top:0; margin-bottom:0; }
+  .testimonials .t-wall { grid-template-columns:minmax(0,1fr); }
+  #tWall > .t-col:nth-child(2) > .t-card:nth-child(n+2) {
+    -webkit-mask-image:none; mask-image:none;
+  }
+  /* Touch-sized stores keep their original words, but cannot collide in a
+     narrow 3D cloud. In-flow labels stay readable without hover or zoom. */
+  #stores.stores-mist { padding-inline:var(--gutter); }
+  /* The store section already supplies the outer gutter; keep its nested
+     wrap inset small enough for the two-column phone labels. */
+  #stores > .wrap { padding-inline:12px; }
+  #stores .air-field {
+    height:auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:28px 20px; padding:16px 0; cursor:default;
+  }
+  #stores .air-node {
+    position:relative; width:100%; min-width:0; height:auto; min-height:144px; margin:0;
+    transform:none !important; opacity:1 !important; filter:none !important;
+  }
+  #stores .air-copy { position:relative; padding:15px 0; transform:none !important; opacity:1 !important; filter:none !important; }
+  #stores :is(.city,.flavour,.hours,.glyph) { transform:none !important; filter:none !important; opacity:1 !important; }
+  #stores .air-mist-layer { display:none; }
+  #stores .air-node:last-of-type { grid-column:1 / -1; }
+  #stores .city { font-size:clamp(22px,4.8vw,29px); }
+  #stores .flavour { font-size:clamp(12px,2.4vw,14px); margin-top:10px; }
+  #stores .hours { font-size:clamp(11px,2.05vw,12px); }
+  #stores .h-section { max-width:none; }
+  #newsletter .newsletter-columns { grid-template-columns:minmax(0,1fr); }
+  #newsletter .newsletter-title { font-size:clamp(27px,7vw,34px); }
+  .foot-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px 20px; }
+  .foot-brand { grid-column:1/-1; }
+}
+
+/* The phone opening is a compact portrait composition, not a full-height
+   carpet on extra-tall screens. Keep the copy and both original actions. */
+@media (max-width:700px) and (orientation:portrait), (max-width:950px) and (max-aspect-ratio:2/3) {
+  #hero { height:min(100svh,180vw); min-height:560px; }
+  #hero .hero-tagline { bottom:72px; }
+  #hero .hero-cta { margin-top:18px; }
+  #hero .scroll-hint { bottom:14px; gap:6px; font-size:11px; line-height:1.2; }
+  #hero .scroll-hint .bar { height:16px; }
+}
+@media (max-width:700px) and (orientation:portrait) and (prefers-reduced-motion:no-preference), (max-width:950px) and (max-aspect-ratio:2/3) and (prefers-reduced-motion:no-preference) {
+  /* Use the measured scene height, not a fixed viewport overlap. This keeps
+     the opening gap compact on both short and extra-tall phones, while the
+     complete card and all later chapters retain their natural document flow. */
+  #tray.tray-sec {
+    --phone-mission-gap:clamp(96px,12svh,132px);
+    margin-top:calc(var(--phone-mission-gap) - var(--phone-mission-scene-height,calc(130svh + var(--phone-mission-gap))));
+  }
+}
+
+/* These two-column portrait frames can fit the complete card. Share the
+   desktop checkpoint and viewport centre, not the phone's in-flow entrance.
+   The stage starts at the handoff end, so fixed -> sticky never jumps. */
+@media (min-width:701px) and (max-aspect-ratio:1/1) and (prefers-reduced-motion:no-preference) {
+  /* The panel already owns its viewport gutters. A second section inset
+     would shrink the flex frame when fixed positioning becomes sticky. */
+  #tray.tray-sec { margin-top:-100svh; padding-inline:0; }
+  #tray .tray-stage { height:100svh; }
+  #tray.tray-sec .tray-sticky {
+    position:sticky; top:0; height:100svh;
+    padding:calc(var(--nav-h) + 26px) 0 34px;
+  }
+  #tray.tray-before .tray-sticky,
+  #tray.tray-entering .tray-sticky {
+    position:fixed; inset:0 0 auto; width:100%; z-index:60;
+    pointer-events:none;
+  }
+  #tray.tray-before .tray-sticky {
+    visibility:hidden; transition:visibility 0s linear 1000ms;
+  }
+  #tray.tray-entering .tray-sticky { visibility:visible; }
+  #trayPlane { width:min(1060px,calc(100vw - var(--gutter) * 2)); }
+  #tray.tray-sec #trayPlane {
+    animation:none; transform:none;
+    transition:box-shadow 1000ms cubic-bezier(.25,.1,.25,1);
+  }
+}
+
+@media (max-width:600px) {
+  #nav > .nav-inner { padding:0 6px 0 14px; }
+  #nav .nav-brand img { height:24px; }
+  #nav .nav-toggle:not([hidden]) {
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    min-height:44px; padding:8px 14px; border:0; border-radius:999px;
+    background:transparent; color:var(--ink); font:inherit; font-size:14px; cursor:pointer;
+  }
+  #nav .nav-links {
+    position:absolute; top:calc(100% + 10px); left:0; right:0;
+    display:flex; flex-direction:column; align-items:stretch; gap:4px;
+    padding:12px; border:1px solid rgba(255,255,255,.8); border-radius:22px;
+    background:rgba(249,251,249,.96); box-shadow:var(--shadow-panel);
+    max-height:calc(100dvh - 92px - env(safe-area-inset-top)); overflow:auto;
+    visibility:hidden; opacity:0; pointer-events:none;
+    transition:opacity .18s ease,visibility .18s;
+  }
+  #nav.nav-menu-open .nav-links { visibility:visible; opacity:1; pointer-events:auto; }
+  #nav .nav-links a { display:flex; font-size:15px; padding:12px 16px; }
+  #nav .nav-links a.is-active { background:rgba(255,255,255,.7); }
+  #nav .nav-glide { display:none; }
+  #nav .nav-bag { display:block; margin:4px 0 0; min-height:44px; }
+  #missionStory .mission-line:nth-child(1) { --mission-left:44%; --mission-top:23%; --mission-size:clamp(28px,7vw,38px); width:80vw; }
+  #missionStory .mission-line:nth-child(2) { --mission-left:64%; --mission-top:45%; --mission-size:clamp(22px,5.5vw,28px); width:65vw; }
+  #missionStory .mission-line:nth-child(3) { --mission-left:36%; --mission-top:64%; --mission-size:clamp(19px,5vw,25px); width:63vw; }
+  #missionStory .mission-line:nth-child(4) { --mission-left:56%; --mission-top:83%; --mission-size:clamp(22px,5.8vw,30px); width:78vw; }
+  #process .step-reveal-inner { grid-template-columns:88px minmax(0,1fr); gap:14px; padding-inline:18px; }
+  #process .step-emblem { padding-right:12px; }
+  #process .step-emblem::after { font-size:8px; }
+  .pdp-stage { width:min(70%,220px); margin:auto; }
+  .pdp-panel { padding:28px 20px; gap:24px; }
+}
+
+@media (max-width:360px) {
+  #stats .num,#stats .num-static { font-size:clamp(28px,10vw,32px); }
+  #trayPlane .tray-surface { padding:18px; }
+  #trayPlane .tray-feature-facts { gap:5px; }
+  #trayPlane .tray-feature-facts li { padding:10px 6px; }
+  #trayPlane .tray-feature-facts span { font-size:10px; }
+  #process .step-reveal-inner { grid-template-columns:1fr; gap:18px; }
+  #process .step-emblem { min-height:100px; padding:0; border:0; }
+  #process .step-emblem svg { width:88px; }
+  #process .step-emblem::after { display:none; }
+  #newsletter > .newsletter-letter { padding:24px 18px; }
+  #newsletter .newsletter-email-line { flex-wrap:wrap; }
+  #newsletter .newsletter-email-line input { flex-basis:100%; }
+  #newsletter .newsletter-email-line button { margin-left:auto; }
+}
+
+@media (max-height:520px) and (max-width:1199px) {
+  #hero { min-height:520px; }
+  #missionStory .mission-pin { min-height:520px; }
+  #missionStory .mission-line:nth-child(1) { --mission-size:28px; }
+  #missionStory .mission-line:nth-child(2),#missionStory .mission-line:nth-child(4) { --mission-size:23px; }
+  .pdp-panel { grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr); gap:24px; padding:28px; }
+}
+@media (prefers-reduced-motion:reduce) and (max-width:1199px) {
+  #missionStory .mission-line:first-child { width:100%; }
+  #tray .tray-glass,#tray .tray-feature-media,#tray .tray-feature-copy > :not(.tray-feature-facts),#tray .tray-feature-facts > li { opacity:1; transition:none; }
+}

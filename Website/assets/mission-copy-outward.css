@@ -1,0 +1,14 @@
+/* Keep the four main garden sentences readable around the falling wordmark. */
+@media (min-width:900px) and (max-width:1449px) {
+  #missionStory .mission-line:nth-child(1) { --mission-left:25%; }
+  #missionStory .mission-line:nth-child(2) { --mission-left:80%; }
+  #missionStory .mission-line:nth-child(3) { --mission-left:15%; }
+  #missionStory .mission-line:nth-child(4) { --mission-left:76%; }
+}
+
+@media (min-width:1450px) {
+  #missionStory .mission-line:nth-child(1) { --mission-left:22%; }
+  #missionStory .mission-line:nth-child(2) { --mission-left:83%; }
+  #missionStory .mission-line:nth-child(3) { --mission-left:13%; }
+  #missionStory .mission-line:nth-child(4) { --mission-left:79%; }
+}

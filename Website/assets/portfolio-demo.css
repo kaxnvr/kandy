@@ -1,0 +1,39 @@
+/* Small, local-only portfolio controls; existing page proportions are intact. */
+.nav-bag[data-demo-bag] { position:relative; }
+.demo-bag-count { position:absolute; top:-5px; right:-5px; min-width:19px; padding:2px 4px; border-radius:99px; background:var(--rose-light); color:var(--ink); font-size:10px; line-height:15px; font-weight:700; }
+.demo-bag-count[hidden] { display:none; }
+.portfolio-demo-note { margin:12px 0 0; color:var(--ink-2); font-size:12px; line-height:1.55; }
+.portfolio-bag-link { padding:0; border:0; background:none; color:var(--moss-deep); font:inherit; font-size:13px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+.pdp-demo-actions { margin:8px 0 0; }
+.demo-bag { width:min(520px,calc(100% - 40px)); max-height:calc(100vh - 40px); max-height:calc(100svh - 40px); margin:auto; padding:28px; overflow:auto; overscroll-behavior:contain; border:1px solid rgba(255,255,255,.95); border-radius:28px; background:var(--paper); color:var(--ink); box-shadow:0 22px 80px rgba(43,38,32,.22); font:inherit; }
+.demo-bag::backdrop { background:rgba(43,38,32,.4); }
+.demo-bag-header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.demo-bag-header h2 { margin:0; font-family:'Marcellus',serif; font-size:28px; line-height:1.2; font-weight:400; }
+.demo-bag-close { flex:none; width:40px; height:40px; border:0; border-radius:50%; background:var(--moss-soft); color:var(--ink); font:inherit; cursor:pointer; }
+.demo-bag .portfolio-demo-note { margin-top:16px; }
+.demo-bag-empty { padding:28px 0; margin:0; color:var(--ink-2); }
+.demo-bag-items { list-style:none; margin:22px 0; padding:0; }
+.demo-bag-item { display:grid; grid-template-columns:60px minmax(0,1fr) auto; align-items:start; gap:14px; padding:18px 0; border-bottom:1px solid var(--line); }
+.demo-bag-item:first-child { padding-top:0; }
+.demo-bag-item img { width:60px; height:80px; object-fit:cover; border-radius:9px; }
+.demo-bag-copy { min-width:0; }
+.demo-bag-copy h3 { margin:0; font:inherit; font-size:15px; line-height:1.35; font-weight:700; }
+.demo-bag-copy p { margin:4px 0 8px; font-size:12px; line-height:1.5; color:var(--ink-3); }
+.demo-bag-quantity { display:flex; flex-wrap:wrap; align-items:center; gap:5px; }
+.demo-bag-quantity button { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; border:0; border-radius:50%; background:var(--moss-soft); color:var(--ink); font:inherit; cursor:pointer; }
+.demo-bag-quantity button:disabled { opacity:.4; cursor:default; }
+.demo-bag-quantity span { min-width:20px; text-align:center; font-size:13px; }
+.demo-bag-quantity .demo-bag-remove { width:auto; min-height:32px; padding:0 4px; margin-left:3px; background:none; border-radius:4px; color:var(--ink-2); font-size:12px; text-decoration:underline; text-underline-offset:3px; }
+.demo-bag-line-total { font-size:14px; line-height:20px; white-space:nowrap; }
+.demo-bag-summary { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:20px 0; font-size:16px; }
+.demo-bag-summary strong { font-weight:700; }
+.demo-bag .btn { width:100%; }
+.demo-bag-status { min-height:18px; margin:12px 0 0; font-size:12px; line-height:18px; color:var(--ink-2); }
+.demo-bag :focus-visible,.portfolio-bag-link:focus-visible { outline:2px solid var(--moss); outline-offset:3px; }
+@media (max-width:420px) {
+  .demo-bag { width:calc(100% - 32px); padding:22px 18px; border-radius:22px; }
+  .demo-bag-item { grid-template-columns:44px minmax(0,1fr); gap:11px; }
+  .demo-bag-item img { width:44px; height:59px; }
+  .demo-bag-line-total { grid-column:2; margin-top:-4px; }
+  .demo-bag-quantity button { min-width:36px; height:36px; }
+}
