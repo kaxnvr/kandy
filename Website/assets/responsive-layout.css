@@ -219,6 +219,22 @@
   .foot-brand { grid-column:1/-1; }
 }
 
+/* Every compact, in-flow card cancels the measured decorative runway.
+   The later portrait rule retains its fixed/sticky checkpoint; wide desktop
+   does not match this query. A near-square landscape must not retain a blank
+   viewport simply because it is a few pixels wider than it is tall. */
+@media (max-width:1199px) and (prefers-reduced-motion:no-preference), (pointer:coarse) and (prefers-reduced-motion:no-preference), (max-aspect-ratio:1/1) and (prefers-reduced-motion:no-preference), (max-height:599px) and (prefers-reduced-motion:no-preference) {
+  #tray.tray-sec {
+    --compact-mission-gap:clamp(96px,12svh,132px);
+    margin-top:calc(var(--compact-mission-gap) - var(--phone-mission-scene-height,calc(130svh + var(--compact-mission-gap))));
+  }
+  /* Keep the card at its reading size; only its existing leaf opacity fades. */
+  #tray.tray-sec #trayPlane {
+    animation:none; transform:none;
+    transition:box-shadow 1000ms cubic-bezier(.25,.1,.25,1);
+  }
+}
+
 /* The phone opening is a compact portrait composition, not a full-height
    carpet on extra-tall screens. Keep the copy and both original actions. */
 @media (max-width:700px) and (orientation:portrait), (max-width:950px) and (max-aspect-ratio:2/3) {

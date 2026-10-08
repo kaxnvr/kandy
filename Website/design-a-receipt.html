@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KANDy — Confections from the Manor Garden</title>
+<meta name="description" content="Confections from an English manor garden. Small-batch, hand-shaped, grown before it was made.">
+<link rel="canonical" href="https://kaxnvr.github.io/kandy/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KANDy">
+<meta property="og:title" content="KANDy — Confections from the Manor Garden">
+<meta property="og:description" content="Confections from an English manor garden. Small-batch, hand-shaped, grown before it was made.">
+<meta property="og:url" content="https://kaxnvr.github.io/kandy/">
+<meta property="og:image" content="https://kaxnvr.github.io/kandy/Website/assets/web/kandy-homepage-share-20261008.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1265">
+<meta property="og:image:height" content="711">
+<meta property="og:image:alt" content="The KANDy homepage: pink candy letters in an English manor garden.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KANDy — Confections from the Manor Garden">
+<meta name="twitter:description" content="Confections from an English manor garden. Small-batch, hand-shaped, grown before it was made.">
+<meta name="twitter:image" content="https://kaxnvr.github.io/kandy/Website/assets/web/kandy-homepage-share-20261008.jpg">
+<meta name="twitter:image:alt" content="The KANDy homepage: pink candy letters in an English manor garden.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -1610,7 +1627,7 @@
 <link rel="stylesheet" href="./assets/mission-copy-outward.css?v=20260924-1">
 <link rel="stylesheet" href="./assets/tray-editorial-entrance.css?v=20260928-reversible-fade">
 <script defer src="./assets/large-fridge-review-gap.js?v=20260924-1"></script>
-<link rel="stylesheet" href="./assets/responsive-layout.css?v=20261001-original-photo-ratio">
+<link rel="stylesheet" href="./assets/responsive-layout.css?v=20261008-compact-mission-gap">
 <script defer src="./assets/responsive-layout.js?v=20260928-1"></script>
 <link rel="stylesheet" href="./assets/portfolio-demo.css?v=20261008-1">
 </head>
@@ -3443,8 +3460,8 @@ function syncMissionRunway(fallStart, fallRange){
   missionStoryHeight = nextHeight;
   missionStorySection.style.height = `${nextHeight}px`;
   missionStorySection.style.setProperty('--mission-runway-height', `${nextHeight}px`);
-  // The phone's in-flow card can cancel this decorative runway precisely.
-  // Only its responsive CSS consumes the value; desktop handoff is unchanged.
+  // Compact in-flow cards cancel this decorative runway precisely.
+  // Only responsive CSS consumes the value; desktop handoff is unchanged.
   document.documentElement.style.setProperty('--phone-mission-scene-height', `${nextHeight}px`);
   window.KandyGardenJourney?.refresh();
   window.__syncTrayEntry?.();
