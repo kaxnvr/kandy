@@ -11,16 +11,17 @@
 <meta property="og:title" content="KANDy — Confections from the Manor Garden">
 <meta property="og:description" content="Confections from an English manor garden. Small-batch, hand-shaped, grown before it was made.">
 <meta property="og:url" content="https://kaxnvr.github.io/kandy/">
-<meta property="og:image" content="https://kaxnvr.github.io/kandy/Website/assets/web/kandy-homepage-share-20261008.jpg">
+<meta property="og:image" content="https://kaxnvr.github.io/kandy/Website/assets/web/kandy-garden-share-20261008.jpg">
+<meta property="og:image:secure_url" content="https://kaxnvr.github.io/kandy/Website/assets/web/kandy-garden-share-20261008.jpg">
 <meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1265">
-<meta property="og:image:height" content="712">
-<meta property="og:image:alt" content="The KANDy homepage: pink candy letters in an English manor garden.">
+<meta property="og:image:width" content="2100">
+<meta property="og:image:height" content="1102">
+<meta property="og:image:alt" content="Pink KANDy candy letters in soft green grass beneath blue sky and white clouds.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="KANDy — Confections from the Manor Garden">
 <meta name="twitter:description" content="Confections from an English manor garden. Small-batch, hand-shaped, grown before it was made.">
-<meta name="twitter:image" content="https://kaxnvr.github.io/kandy/Website/assets/web/kandy-homepage-share-20261008.jpg">
-<meta name="twitter:image:alt" content="The KANDy homepage: pink candy letters in an English manor garden.">
+<meta name="twitter:image" content="https://kaxnvr.github.io/kandy/Website/assets/web/kandy-garden-share-20261008.jpg">
+<meta name="twitter:image:alt" content="Pink KANDy candy letters in soft green grass beneath blue sky and white clouds.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -2405,6 +2406,7 @@
   function bindTilt(el) {
     var max = el.classList.contains('fan-card') ? 3 : (parseFloat(el.getAttribute('data-tilt')) || 2);
     el.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
       var r = el.getBoundingClientRect();
       var px = (e.clientX - r.left) / r.width;
       var py = (e.clientY - r.top) / r.height;
@@ -2414,7 +2416,8 @@
       el.style.setProperty('--rx', ((0.5 - py) * max).toFixed(2) + 'deg');
       el.style.setProperty('--ry', ((px - 0.5) * max).toFixed(2) + 'deg');
     });
-    el.addEventListener('pointerleave', function () {
+    el.addEventListener('pointerleave', function (e) {
+      if (e.pointerType === 'touch') return;
       el.style.setProperty('--rx', '0deg');
       el.style.setProperty('--ry', '0deg');
     });
@@ -2426,6 +2429,7 @@
   /* Glass surfaces with no tilt still want the specular bloom to follow. */
   document.querySelectorAll('.lg[data-tilt-off]').forEach(function (el) {
     el.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
       var r = el.getBoundingClientRect();
       el.style.setProperty('--mx', (((e.clientX - r.left) / r.width) * 100) + '%');
       el.style.setProperty('--my', (((e.clientY - r.top) / r.height) * 100) + '%');
@@ -2437,6 +2441,7 @@
   var scenes = document.querySelectorAll('.tilt-scene');
   if (!reduced) {
     window.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
       var nx = (e.clientX / window.innerWidth) - 0.5;
       var ny = (e.clientY / window.innerHeight) - 0.5;
       // The wordmark no longer leans via CSS — the scene moves a real camera
@@ -2939,6 +2944,7 @@
 
   if (!reduced) {
     pdpCard.parentNode.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
       var r = pdpCard.getBoundingClientRect();
       var px = (e.clientX - r.left) / r.width;
       var py = (e.clientY - r.top) / r.height;
@@ -2948,7 +2954,8 @@
       tTarget.my = py * 100;
       tiltKick();
     });
-    pdpCard.parentNode.addEventListener('pointerleave', function () {
+    pdpCard.parentNode.addEventListener('pointerleave', function (e) {
+      if (e.pointerType === 'touch') return;
       // only the tilt returns to square; the glow is faded out by CSS and is
       // deliberately left where it was, so it dies in place rather than
       // sliding to the middle on its way out
@@ -2958,6 +2965,7 @@
     // Snap the glow to the entry point instead of easing to it, or it would
     // visibly glide across the card from wherever the last pass left it.
     pdpCard.addEventListener('pointerenter', function (e) {
+      if (e.pointerType === 'touch') return;
       var r = pdpCard.getBoundingClientRect();
       tCur.mx = tTarget.mx = ((e.clientX - r.left) / r.width) * 100;
       tCur.my = tTarget.my = ((e.clientY - r.top) / r.height) * 100;
@@ -3369,7 +3377,7 @@ addEventListener('pagehide', event => {
 // Start both dependency graphs together, but contain a failed download or a
 // synchronous WebGL startup error. Neither may strand the real loader at 98%.
 const sceneSources = Promise.allSettled([
-  import('./hero-meadow.js?v=20260929-portrait-shadow'),
+  import('./hero-meadow.js?v=20261008-mobile-soft-focus'),
   import('./kandy-letter-fall.js?v=performance-2')
 ]);
 
@@ -3554,7 +3562,7 @@ window.__heroHandoff = {
 };
 </script>
 <script type="module">
-import { mountSoftGardenBackground } from './assets/soft-garden/background.js?v=soft-trail-1';
+import { mountSoftGardenBackground } from './assets/soft-garden/background.js?v=20261008-touch-scroll';
 
 await window.__kandyLoader?.painted;
 const garden = mountSoftGardenBackground({ canvas:document.getElementById('softGardenBackground') });

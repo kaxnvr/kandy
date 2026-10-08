@@ -51,13 +51,15 @@ const reduced  = matchMedia('(prefers-reduced-motion:reduce)').matches;
 // but each blade out there is scaled up with distance, so it still needs
 // fewer than the meadow for the same apparent density.
 const TIERS = {
-  high: { blades:38000, ridge:170000, dpr:1.75, bloom:true,  dof:true,  daisies:190, petals:11, flutters:0, fg:14 },
-  mid:  { blades:22000, ridge:95000,  dpr:1.60, bloom:true,  dof:false, daisies:120, petals:8, flutters:0,  fg:10 },
+  high: { blades:38000, ridge:170000, dpr:1.75, bloom:true, dof:true, blurSamples:24, blurScale:.5, bladeSegments:5, shadowSize:2048, minDprScale:.62, daisies:190, petals:11, flutters:0, fg:14 },
+  mid:  { blades:22000, ridge:95000,  dpr:1.60, bloom:true, dof:true, blurSamples:12, blurScale:.4, bladeSegments:4, shadowSize:1536, minDprScale:.72, daisies:120, petals:8, flutters:0, fg:10 },
   // Portrait puts the camera much closer to the turf than landscape does, and
   // below ~12k the dome starts showing through between the blades.
-  low:  { blades:12000, ridge:45000,  dpr:1.35, bloom:false, dof:false, daisies:70,  petals:5, flutters:0,  fg:7  }
+  low:  { blades:12000, ridge:45000,  dpr:1.35, bloom:false, dof:true, blurSamples:8, blurScale:.33, bladeSegments:3, shadowSize:1024, minDprScale:.78, daisies:70, petals:5, flutters:0, fg:7 }
 };
 const tierName = (() => {
+  // Explicit override for isolated quality comparisons; normal pages auto-detect.
+  if (Object.hasOwn(TIERS, opts.qualityTier)) return opts.qualityTier;
   const coarse = matchMedia('(pointer:coarse)').matches;
   const small  = Math.min(innerWidth, innerHeight) < 820;
   const cores  = navigator.hardwareConcurrency || 4;
@@ -367,7 +369,7 @@ scene.add(logoHemi);
 const logoKey = new THREE.DirectionalLight(0xFFF1DF, 1.45);
 logoKey.position.set(-5.5, 7.5, 7);
 logoKey.castShadow = true;
-logoKey.shadow.mapSize.set(2048, 2048);
+logoKey.shadow.mapSize.set(Q.shadowSize, Q.shadowSize);
 logoKey.shadow.camera.near = .5;
 logoKey.shadow.camera.far = 35;
 logoKey.shadow.camera.left = -7;
@@ -1035,7 +1037,7 @@ const BLADES = Q.blades;
 let narrowUnderGrowth = null;
 let narrowGrassMat = null;
 {
-  const SEG = 5;
+  const SEG = Q.bladeSegments;
   const pos = [], idx = [];
   for (let i=0;i<=SEG;i++){
     const v = i/SEG, w = 0.5 * (1 - v*v*0.82) * (1-v*0.15);
@@ -1831,19 +1833,21 @@ class SceneDofPass extends Pass {
     super();
     this.scene = scene; this.camera = camera;
     this.dof = true;
+    this.blurScale = Q.blurScale;
     const depthTexture = new THREE.DepthTexture(1,1);
     depthTexture.type = THREE.UnsignedIntType;
     this.rt = new THREE.WebGLRenderTarget(1,1,{
       minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
       type: THREE.HalfFloatType, depthTexture, depthBuffer: true
     });
-    // Only the soft lens blur is half-resolution. Scene colour/depth, the
+    // Only the soft lens blur is reduced-resolution. Scene colour/depth, the
     // in-focus pixels and the separately composited candy remain full-size.
     this.blurRT = new THREE.WebGLRenderTarget(1,1,{
       minFilter:THREE.LinearFilter, magFilter:THREE.LinearFilter,
       type:THREE.HalfFloatType, depthBuffer:false
     });
     this.material = new THREE.ShaderMaterial({
+      defines: { DOF_SAMPLES: Q.blurSamples },
       uniforms:{
         tDiffuse:{value:null}, tDepth:{value:null}, tBlur:{value:null}, uResolve:{value:0},
         uNear:{value:1}, uFar:{value:130},
@@ -1933,8 +1937,8 @@ class SceneDofPass extends Pass {
             return;
           }
           vec3 sum = c.rgb; float wsum = 1.0;
-          for (int i=0;i<24;i++){
-            float t = (float(i)+0.5)/24.0;
+          for (int i=0;i<DOF_SAMPLES;i++){
+            float t = (float(i)+0.5)/float(DOF_SAMPLES);
             float r = sqrt(t);
             float a = float(i)*2.39996323;                   // golden angle
             vec2 o = vec2(cos(a), sin(a)) * r * coc;
@@ -1956,7 +1960,7 @@ class SceneDofPass extends Pass {
   }
   setSize(w,h){
     this.rt.setSize(w,h);
-    this.blurRT.setSize(Math.max(1,Math.ceil(w*.5)),Math.max(1,Math.ceil(h*.5)));
+    this.blurRT.setSize(Math.max(1,Math.ceil(w*this.blurScale)),Math.max(1,Math.ceil(h*this.blurScale)));
     this.material.uniforms.uAspect.value = w/h;
   }
   render(renderer, writeBuffer){
@@ -2130,6 +2134,8 @@ function renderComposite(){
    of the wordmark as you lean. */
 const ptr = {x:0, y:0, sx:0, sy:0};
 addEventListener('pointermove', e => {
+  // A page swipe is navigation, not an instruction to swing the camera.
+  if (e.pointerType === 'touch') return;
   ptr.x = (e.clientX/innerWidth)*2 - 1;
   ptr.y = (e.clientY/innerHeight)*2 - 1;
 }, {passive:true});
@@ -2341,8 +2347,8 @@ function cameraUpdate(phi){
 
 /* ─────────────────────────── adaptive quality ───────────────────────────
    Only touches things that are free to change between frames. Resolution goes
-   first because it buys the most per unit of visible damage; DOF and bloom are
-   given up only if that was not enough. */
+   first within a tier-specific clarity floor. Keep depth of field: turning it
+   off exposes hard grass edges. Optional bloom and blur resolution can fall. */
 let slow = 0, fast = 0;
 function adapt(){
   // A throttled tab looks exactly like a GPU that cannot keep up. Measured
@@ -2366,15 +2372,25 @@ function adapt(){
     slow++; fast = 0;
     if (slow > 3){
       slow = 0;
-      if (dprScale > 0.62){ dprScale = Math.max(0.62, dprScale - 0.12); resize(); }
-      else if (dofPass.dof){ dofPass.dof = false; const el = UI('pDof'); if (el) el.textContent = 'off (auto)'; }
+      if (dprScale > Q.minDprScale){ dprScale = Math.max(Q.minDprScale, dprScale - 0.12); resize(); }
       else if (bloom.enabled){ bloom.enabled = false; }
+      else if (dofPass.blurScale > .25){
+        dofPass.blurScale = Math.max(.25, dofPass.blurScale - .05);
+        dofPass.setSize(dofPass.rt.width, dofPass.rt.height);
+      }
     }
   } else if (fps > 58){
     fast++; slow = 0;
     // Recovering in 0.12 steps every 3s rather than 0.06 every 6s: coming back
     // from a spurious demotion should not take half a minute.
-    if (fast > 6 && dprScale < 1){ dprScale = Math.min(1, dprScale + 0.12); resize(); fast = 0; }
+    if (fast > 6){
+      fast = 0;
+      if (dprScale < 1){ dprScale = Math.min(1, dprScale + 0.12); resize(); }
+      else if (dofPass.blurScale < Q.blurScale){
+        dofPass.blurScale = Math.min(Q.blurScale, dofPass.blurScale + .05);
+        dofPass.setSize(dofPass.rt.width, dofPass.rt.height);
+      }
+    }
   }
 }
 // Returning to the tab should not inherit the stale verdict from the frames

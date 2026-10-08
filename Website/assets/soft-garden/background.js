@@ -254,9 +254,11 @@ export function mountSoftGardenBackground({ canvas }) {
         diagnostics.dragSamples++;
       }
       function onPointerMove(event) {
+        // Touch is reserved for native scrolling. A global swipe must not
+        // wake the full-screen fur simulation behind every content section.
+        if (event.pointerType==='touch') return;
         if (paused || destroyed || contextLost) return;
         if (heldPointerId!==null && event.pointerId!==heldPointerId) return;
-        if (heldPointerId===null && event.pointerType==='touch') return;
         if (!pointerInside) {
           if (!pointerPosition(event)) return;
           previous.copy(pointer); pointerInside=true;
@@ -282,8 +284,9 @@ export function mountSoftGardenBackground({ canvas }) {
         wake(recovery+0.12);
       }
       function onPointerDown(event) {
+        if (event.pointerType==='touch') return;
         if (paused || destroyed || contextLost) return;
-        if (event.button!==0 && event.pointerType!=='touch') return;
+        if (event.button!==0) return;
         if (heldPointerId!==null || !pointerPosition(event)) return;
         previous.copy(pointer); pointerInside=true;
         dirtyPointer=false; simUniforms.uBrush.value.set(0,0,0);
