@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KANDy — Confections from the Manor Garden</title>
+<script src="./assets/phone-profile.js?v=20261011-1"></script>
 <meta name="description" content="Confections from an English manor garden. Small-batch, hand-shaped, grown before it was made.">
 <link rel="canonical" href="https://kaxnvr.github.io/kandy/">
 <meta property="og:type" content="website">
@@ -1631,6 +1632,9 @@
 <link rel="stylesheet" href="./assets/responsive-layout.css?v=20261008-phone-landscape-2">
 <script defer src="./assets/responsive-layout.js?v=20260928-1"></script>
 <link rel="stylesheet" href="./assets/portfolio-demo.css?v=20261008-1">
+<link rel="stylesheet" href="./assets/phone-layout.css?v=20261011-1">
+<link rel="stylesheet" href="./assets/phone-cards.css?v=20261011-1">
+<script defer src="./assets/phone-cards.js?v=20261011-1"></script>
 </head>
 <body>
 <div class="site-loader" id="siteLoader" role="dialog" aria-modal="true" aria-label="Loading the KANDy garden">
@@ -2522,7 +2526,7 @@
   var lastMissionProgress = -1;
 
   function onMissionStoryScroll(progressOverride) {
-    if (!missionStory || !missionLines.length) return;
+    if (!missionStory || !missionLines.length || window.KandyPhoneProfile?.matches) return;
     // Once the hero owns this clock, never render yesterday's rounded DOM
     // diagnostic value between two full-precision updates.
     if (typeof progressOverride !== 'number' && window.__heroHandoff) return;
@@ -2585,7 +2589,7 @@
 
     // A phone card can be taller than its screen. Keep it in document flow,
     // with the same reversible leaf fade, instead of clipping a fixed panel.
-    if (compactLayout.matches && !portraitFridge.matches) {
+    if (window.KandyPhoneProfile?.matches || (compactLayout.matches && !portraitFridge.matches)) {
       var top = traySec.getBoundingClientRect().top;
       var visible = reduced || top < window.innerHeight * .88;
       if (!visible && traySec.classList.contains('tray-revealed')) {
@@ -3339,7 +3343,7 @@ return () => {
 }
 
 const responsiveReceipt = mountResponsiveReceipt({
-  media: matchMedia('(min-width:701px)'),
+  media: window.KandyPhoneProfile.withMedia('(min-width:701px)', {excludePhone:true}),
   async load() {
     await window.__kandyLoader?.painted;
     await window.__kandyLoader?.artPainted;
@@ -3425,6 +3429,7 @@ function mountScene(source, factory, options, fallback) {
 const meadow = mountScene(meadowSource, 'createMeadow', {
   canvas: document.getElementById('heroGL'),
   centeredPhoneLogo: true,
+  phoneMode: window.KandyPhoneProfile.matches,
   logoUrl: './assets/web/optimized/kandy-logo-800-lossless.webp',
   onReady: () => {
     // The meadow wordmark may finish after the separate falling letters.
@@ -3487,7 +3492,7 @@ function measureHandoffLayout(){
   syncMissionRunway(fallStart, fallRange);
 }
 function syncHeroHandoff(){
-  if (reduceHandoffMotion){
+  if (reduceHandoffMotion || window.KandyPhoneProfile.matches){
     meadow.setLogoTrack(0);
     letterFall?.setProgress(0);
     syncGardenColourReveal(1);
@@ -3523,10 +3528,32 @@ function queueHeroHandoff(){
 addEventListener('resize', queueHeroHandoff);
 document.fonts?.ready.then(queueHeroHandoff);
 
-letterFall = mountScene(lettersSource, 'createLetterFall', {
-  canvas:document.getElementById('letterFallGL'),
-  onReady:() => { handoffLayout = null; syncHeroHandoff(); window.__kandyLoader?.lettersReady(); }
-}, staticLettersFallback);
+// Phone reading keeps the meadow artwork, but needs no second full-screen
+// model drifting across product copy. Only desktop mounts that asset/context.
+function syncLetterMode(){
+  const canvas = document.getElementById('letterFallGL');
+  canvas.hidden = window.KandyPhoneProfile.matches;
+  if (window.KandyPhoneProfile.matches){
+    letterFall?.setProgress(0);
+    readyAfterFallbackPaint(() => window.__kandyLoader?.lettersReady());
+  } else if (!letterFall){
+    letterFall = mountScene(lettersSource, 'createLetterFall', {
+      canvas,
+      onReady:() => { handoffLayout = null; syncHeroHandoff(); window.__kandyLoader?.lettersReady(); }
+    }, staticLettersFallback);
+    window.__letterFall = letterFall;
+  }
+}
+syncLetterMode();
+window.KandyPhoneProfile.addEventListener('change', () => {
+  if (window.KandyPhoneProfile.matches){
+    missionStorySection.style.removeProperty('height');
+    missionStorySection.style.removeProperty('--mission-runway-height');
+  }
+  missionStoryHeight = 0;
+  syncLetterMode();
+  queueHeroHandoff();
+});
 // Scroll and resize are already queued by the scene's single frame owner.
 syncHeroHandoff();
 
@@ -3543,8 +3570,8 @@ document.addEventListener('visibilitychange', () => {
   else if (heroSec.getBoundingClientRect().bottom > 0) meadow.setPaused(false);
 });
 
-/* The canvas sizes off its own box and the hero is 100dvh — which on mobile
-   changes when the URL bar slides away without firing a window resize. */
+/* Size off the actual canvas box. Phone CSS uses a stable small viewport;
+   the observer still handles real orientation and layout changes. */
 if ('ResizeObserver' in window) new ResizeObserver(() => {
   meadow.resize();
   queueHeroHandoff();
@@ -3557,7 +3584,7 @@ window.__heroHandoff = {
   debug(track, fall){
     const passed = clamp01(track) * Math.max(meadow.logoTrackLimit || innerHeight * .52, 1);
     meadow.setLogoTrack(passed);
-    letterFall.setProgress(clamp01(fall));
+    letterFall?.setProgress(clamp01(fall));
   }
 };
 </script>

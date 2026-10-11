@@ -1,0 +1,94 @@
+/* Phone-only flow. Desktop selectors and animation constants are untouched. */
+html[data-kandy-phone="true"] {
+  --gutter:clamp(20px,5vw,28px);
+  --chapter-gap:64px;
+  scroll-padding-top:80px;
+}
+html[data-kandy-phone="true"] #hero { height:min(100svh,180vw); min-height:560px; }
+html[data-kandy-phone="true"] #letterFallGL { display:none; }
+html[data-kandy-phone="true"] #missionStory {
+  height:auto !important; min-height:0; padding:44px var(--gutter) 40px;
+  margin:0; overflow:visible;
+}
+html[data-kandy-phone="true"] #missionStory .mission-pin {
+  position:relative; top:auto; height:auto; min-height:0; display:block;
+}
+html[data-kandy-phone="true"] #missionStory .mission-copy {
+  height:auto; min-height:0; max-height:none; max-width:34ch; margin:0 auto;
+  padding:0; display:grid; gap:15px; transform:none;
+}
+html[data-kandy-phone="true"] #missionStory .mission-line {
+  display:block; position:static; inset:auto; width:auto; max-width:none;
+  margin:0; font-size:clamp(19px,5.1vw,23px); line-height:1.3;
+  text-align:left; transform:none !important; filter:none !important;
+  opacity:1 !important; color:var(--ink-2); transition:none;
+}
+html[data-kandy-phone="true"] #missionStory .mission-line:first-child {
+  font-size:clamp(25px,6.7vw,31px); line-height:1.14; color:var(--ink);
+}
+html[data-kandy-phone="true"] #missionStory .mission-line:nth-child(n+5) {
+  font-size:15px; line-height:1.45; color:var(--ink-3);
+}
+html[data-kandy-phone="true"] #tray.tray-sec {
+  margin-top:0; padding:0 var(--gutter) 48px;
+}
+html[data-kandy-phone="true"] #tray .tray-stage { height:auto; }
+html[data-kandy-phone="true"] #tray.tray-sec .tray-sticky {
+  position:relative; inset:auto; width:100%; height:auto; min-height:0;
+  padding:0; overflow:visible; perspective:none;
+  visibility:visible; opacity:1; pointer-events:auto;
+}
+html[data-kandy-phone="true"] #tray #trayPlane { width:100%; max-width:700px; margin:auto; transform:none; }
+html[data-kandy-phone="true"] #tray :is(.tray-glass,.tray-feature-media,.tray-feature-copy > *, .tray-feature-facts > li) {
+  opacity:1; transform:none; filter:none; transition:none;
+}
+html[data-kandy-phone="true"] #receipt { display:none; }
+html[data-kandy-phone="true"] #story.story { margin-top:var(--chapter-gap); top:0; margin-bottom:0; }
+html[data-kandy-phone="true"] #nav { padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right)); }
+html[data-kandy-phone="true"] #nav > .nav-inner { padding:0 6px 0 14px; }
+html[data-kandy-phone="true"] #nav .nav-toggle:not([hidden]) {
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  min-height:44px; padding:8px 14px; border:0; border-radius:999px;
+  background:transparent; color:var(--ink); font:inherit; font-size:14px; cursor:pointer;
+}
+html[data-kandy-phone="true"] #nav .nav-links {
+  position:absolute; top:calc(100% + 10px); left:0; right:0;
+  display:flex; flex-direction:column; align-items:stretch; gap:4px;
+  padding:12px; border:1px solid rgba(255,255,255,.8); border-radius:22px;
+  background:rgba(249,251,249,.96); box-shadow:var(--shadow-panel);
+  max-height:calc(100dvh - 92px - env(safe-area-inset-top)); overflow:auto;
+  visibility:hidden; opacity:0; pointer-events:none;
+  transition:opacity .18s ease,visibility .18s;
+}
+html[data-kandy-phone="true"] #nav.nav-menu-open .nav-links { visibility:visible; opacity:1; pointer-events:auto; }
+html[data-kandy-phone="true"] #nav .nav-links a { display:flex; font-size:15px; padding:12px 16px; }
+html[data-kandy-phone="true"] #nav .nav-glide { display:none; }
+html[data-kandy-phone="true"] #nav .nav-bag { display:block; margin:4px 0 0; min-height:44px; }
+html[data-kandy-phone="true"] #stores.stores-mist { padding-inline:var(--gutter); }
+html[data-kandy-phone="true"] #stores > .wrap { padding-inline:12px; }
+html[data-kandy-phone="true"] #stores .air-field {
+  height:auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:28px 20px; padding:16px 0; cursor:default;
+}
+html[data-kandy-phone="true"] #stores .air-node {
+  position:relative; width:100%; min-width:0; height:auto; min-height:144px; margin:0;
+  transform:none !important; opacity:1 !important; filter:none !important;
+}
+html[data-kandy-phone="true"] #stores .air-copy { position:relative; padding:15px 0; transform:none !important; }
+html[data-kandy-phone="true"] #stores :is(.air-copy,.city,.flavour,.hours,.glyph) { opacity:1 !important; filter:none !important; }
+html[data-kandy-phone="true"] #stores :is(.city,.flavour,.hours,.glyph) { transform:none !important; }
+html[data-kandy-phone="true"] #stores .air-mist-layer { display:none; }
+html[data-kandy-phone="true"] #stores .air-node:last-of-type { grid-column:1 / -1; }
+html[data-kandy-phone="true"] #stores .city { font-size:clamp(22px,4.8vw,29px); }
+html[data-kandy-phone="true"] #stores .flavour { font-size:13px; margin-top:10px; }
+html[data-kandy-phone="true"] #stores .hours { font-size:12px; }
+@media (orientation:landscape) {
+  html[data-kandy-phone="true"] #hero { height:100svh; min-height:360px; }
+  html[data-kandy-phone="true"] #hero .hero-tagline { bottom:max(16px,env(safe-area-inset-bottom)); }
+  html[data-kandy-phone="true"] #hero .hero-copy .lead { font-size:15px; line-height:1.4; transform:none; }
+  html[data-kandy-phone="true"] #hero .hero-cta { margin-top:10px; transform:none; }
+  html[data-kandy-phone="true"] #hero .scroll-hint { display:none; }
+  html[data-kandy-phone="true"] #missionStory .mission-copy { max-width:56ch; }
+  html[data-kandy-phone="true"] #stores .air-field { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  html[data-kandy-phone="true"] #stores .air-node:last-of-type { grid-column:1 / -1; }
+}

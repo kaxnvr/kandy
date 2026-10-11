@@ -377,7 +377,10 @@
     if (!id || goTo(id,behavior)) return;
     document.getElementById(id)?.scrollIntoView({behavior,block:'start'});
   }
-  addEventListener('hashchange', () => restoreAnchor(reduced.matches?'instant':'smooth'));
+  addEventListener('hashchange', () => {
+    // Phone anchors already use native navigation and history restoration.
+    if (!window.KandyPhoneProfile?.matches) restoreAnchor(reduced.matches?'instant':'smooth');
+  });
   // Fonts and the meadow's measured mission runway settle during loading.
   // Honor an initial #products link once that preceding layout is final.
   const loader = document.getElementById('siteLoader');

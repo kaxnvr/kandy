@@ -4,7 +4,7 @@
   const toggle = nav?.querySelector('.nav-toggle');
   const links = document.getElementById('navLinks');
   if (!nav || !toggle || !links) return;
-  const narrow = matchMedia('(max-width:600px)');
+  const narrow = window.KandyPhoneProfile?.withMedia('(max-width:600px)') || matchMedia('(max-width:600px)');
 
   function close(returnFocus = false) {
     nav.classList.remove('nav-menu-open');

@@ -38,7 +38,7 @@
     return glyphs;
   }));
 
-  const small = matchMedia('(max-width:700px)');
+  const small = window.KandyPhoneProfile?.withMedia('(max-width:700px)') || matchMedia('(max-width:700px)');
   const fine = matchMedia('(hover:hover) and (pointer:fine)');
   const reduced = matchMedia('(prefers-reduced-motion:reduce)');
   const FREEZE_HOLD = new URLSearchParams(location.search).has('qaHold');

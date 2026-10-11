@@ -15,6 +15,9 @@ import { addCandyDecorations } from './kandy-logo-decorations.js';
 
 export function createMeadow(opts = {}){
 const hostCanvas = opts.canvas;
+// The page owns device policy. A narrow desktop or coarse-pointer tablet does
+// not opt into this profile unless its host explicitly requests it.
+const phoneMode = opts.phoneMode === true;
 const LOGO_URL   = opts.logoUrl || "../Logo/kandy-logo-1600.png";
 const UI = (id) => (opts.panel ? document.getElementById(id) : null);
 // Opt-in for the website's phone composition; other mounts and desktops keep
@@ -57,7 +60,14 @@ const TIERS = {
   // below ~12k the dome starts showing through between the blades.
   low:  { blades:12000, ridge:45000,  dpr:1.35, bloom:false, dof:true, blurSamples:8, blurScale:.33, bladeSegments:3, shadowSize:1024, minDprScale:.78, daisies:70, petals:5, flutters:0, fg:7 }
 };
+// A fixed phone budget trades redundant scene work for clear in-focus pixels.
+// Keep the original tiers intact for every existing non-phone mount.
+const PHONE_QUALITY = {
+  ...TIERS.low, ridge:18000, dpr:2, minDprScale:1, blurScale:.25, fixedResolution:true
+};
 const tierName = (() => {
+  // The explicit phone profile also avoids creating a throwaway GPU probe.
+  if (phoneMode) return 'low';
   // Explicit override for isolated quality comparisons; normal pages auto-detect.
   if (Object.hasOwn(TIERS, opts.qualityTier)) return opts.qualityTier;
   const coarse = matchMedia('(pointer:coarse)').matches;
@@ -80,7 +90,7 @@ const tierName = (() => {
   if (coarse || cores <= 4) return 'mid';
   return 'high';
 })();
-const Q = { ...TIERS[tierName] };
+const Q = { ...(phoneMode ? PHONE_QUALITY : TIERS[tierName]) };
 // The low-tier override also exposes the real phone turf treatment to the
 // isolated quality preview; ordinary fine-pointer desktops keep their finish.
 const mobileMeadow = tierName === 'low' || matchMedia('(pointer:coarse)').matches;
@@ -1039,6 +1049,7 @@ const BLADES = Q.blades;
 // a tall narrow shape: it cannot rely on the aspect ratio from page load.
 let narrowUnderGrowth = null;
 let narrowGrassMat = null;
+const phoneGrassCounts = phoneMode ? { meadow:0, fringe:0, portrait:0, ridge:0 } : null;
 {
   const SEG = Q.bladeSegments;
   const pos = [], idx = [];
@@ -1086,6 +1097,7 @@ let narrowGrassMat = null;
   geo.setAttribute('iSize', ia(iSize,2));
   geo.setAttribute('iTint', ia(iTint,1));
   geo.instanceCount = placed;
+  if (phoneMode) phoneGrassCounts.meadow = placed;
   { const el = UI('pBlades'); if (el) el.textContent = placed.toLocaleString(); }
 
   const mat = new THREE.ShaderMaterial({
@@ -1319,6 +1331,7 @@ let narrowGrassMat = null;
     fgeo.setAttribute('iSize',ia(fSize,2));
     fgeo.setAttribute('iTint',ia(fTint,1));
     fgeo.instanceCount=frontPlaced;
+    if (phoneMode) phoneGrassCounts.fringe = frontPlaced;
     const fringe=new THREE.Mesh(fgeo,mat);
     fringe.frustumCulled=false;
     scene.add(fringe);
@@ -1334,7 +1347,11 @@ let narrowGrassMat = null;
     // Portrait exposes the extreme near rim of the mound as well, so it needs
     // materially more coverage than a landscape frame. Keeping this in one
     // instanced draw is still inexpensive, even at the mobile quality tier.
-    const NARROW_FILL = Math.min(32000, Math.round(BLADES * 2.60));
+    // The original portrait carpet overlaps the main field. On phones retain
+    // its full footprint with fewer, slightly wider blades instead of shading
+    // the same foreground repeatedly at the expense of render resolution.
+    const NARROW_FILL = phoneMode ? Math.round(BLADES * 1.10)
+      : Math.min(32000, Math.round(BLADES * 2.60));
     const ngeo = new THREE.InstancedBufferGeometry();
     ngeo.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
     ngeo.setIndex(idx);
@@ -1364,7 +1381,7 @@ let narrowGrassMat = null;
       // the small soil gaps rather than becoming another sparse row.
       const near=THREE.MathUtils.clamp((z+2.0)/6.0,0,1);
       nSize.push(0.20+Math.random()*0.20+near*0.14,
-                 (0.055+Math.random()*0.038)*fat);
+                 (0.055+Math.random()*0.038)*fat*(phoneMode ? 1.20 : 1));
       nTint.push(Math.random());
       narrowPlaced++;
     }
@@ -1374,6 +1391,7 @@ let narrowGrassMat = null;
     ngeo.setAttribute('iSize',ia(nSize,2));
     ngeo.setAttribute('iTint',ia(nTint,1));
     ngeo.instanceCount=narrowPlaced;
+    if (phoneMode) phoneGrassCounts.portrait = narrowPlaced;
     narrowGrassMat=mat.clone();
     // The dense portrait carpet doubled up the broad shadow lanes, turning
     // them into dark vertical streaks behind the opening copy. Let the real
@@ -1508,6 +1526,7 @@ let narrowGrassMat = null;
     rgeo.setAttribute('iSize', ia(jSize,2));
     rgeo.setAttribute('iTint', ia(jTint,1));
     rgeo.instanceCount = rplaced;
+    if (phoneMode) phoneGrassCounts.ridge = rplaced;
 
     const rmat = mat.clone();
     // Keep the far rolling field unchanged; the upright correction is only
@@ -1535,6 +1554,8 @@ let narrowGrassMat = null;
     { const el = UI('pBlades'); if (el) el.textContent = (placed + frontPlaced + rplaced).toLocaleString(); }
   }
 }
+
+if (phoneMode) canvas.dataset.phoneGrassCounts = JSON.stringify(phoneGrassCounts);
 
 /* ─────────────────────────── daisies on the mound ─────────────────────────── */
 {
@@ -2036,7 +2057,7 @@ const logoRenderTarget=new THREE.WebGLRenderTarget(1,1,{
   depthTexture:logoDepthTexture
 });
 logoRenderTarget.samples=Math.min(
-  tierName==='high'?4:tierName==='mid'?2:0,
+  phoneMode?2:tierName==='high'?4:tierName==='mid'?2:0,
   renderer.capabilities.maxSamples||4
 );
 const logoCompositeMaterial=new THREE.ShaderMaterial({
@@ -2100,8 +2121,10 @@ function renderComposite(){
     const oldAutoClear=renderer.autoClear;
     renderer.autoClear=false;
     renderer.setRenderTarget(null);
-    renderer.clearDepth();
-    renderer.render(flutterScene,camera);
+    if (!phoneMode || Q.flutters > 0) {
+      renderer.clearDepth();
+      renderer.render(flutterScene,camera);
+    }
     renderer.autoClear=oldAutoClear;
     return;
   }
@@ -2137,8 +2160,10 @@ function renderComposite(){
   renderer.autoClear=false;
   renderer.setRenderTarget(null);
   logoCompositeQuad.render(renderer);
-  renderer.clearDepth();
-  renderer.render(flutterScene,camera);
+  if (!phoneMode || Q.flutters > 0) {
+    renderer.clearDepth();
+    renderer.render(flutterScene,camera);
+  }
   renderer.autoClear=oldAutoClear;
 }
 
@@ -2209,7 +2234,9 @@ function resize(){
 
   // Retina-sized windows otherwise allocate several multi-million-pixel HDR
   // buffers for each frame. Keep their total area bounded, not just the DPR.
-  const dpr = Math.min(devicePixelRatio||1, Q.dpr, Math.sqrt(2500000/(w*h))) * dprScale;
+  const dpr = phoneMode
+    ? Math.min(devicePixelRatio||1, Q.dpr)
+    : Math.min(devicePixelRatio||1, Q.dpr, Math.sqrt(2500000/(w*h))) * dprScale;
   // Browser interpolation attenuates dithering when the bounded canvas is
   // upscaled on Retina. Compensate without increasing any render target.
   outputPass.uniforms.uDitherStrength.value = 1.5 * Math.min(2,(devicePixelRatio||1)/dpr);
@@ -2227,6 +2254,16 @@ function resize(){
   dofPass.setSize(db.x, db.y);
   logoRenderTarget.setSize(db.x,db.y);
   logoCompositeMaterial.uniforms.uLogoTexel.value.set(1/db.x,1/db.y);
+  if (phoneMode) {
+    // Read-only QA evidence; this reports configured samples, not a claim
+    // that every driver supports the requested multisampled HDR format.
+    canvas.dataset.phoneRendererDpr = dpr.toFixed(2);
+    canvas.dataset.phoneDrawingBuffer = `${db.x}x${db.y}`;
+    canvas.dataset.phoneLogoSamples = String(logoRenderTarget.samples);
+    canvas.dataset.phoneDofScale = String(dofPass.blurScale);
+    canvas.dataset.phoneResolutionPolicy = 'fixed-clarity';
+    canvas.dataset.phonePortraitGrassVisible = String(Boolean(narrowUnderGrowth?.visible));
+  }
   // The bloom pass allocates its own low-resolution daylight glow buffers.
   { const el = UI('pDpr'); if (el) el.textContent = dpr.toFixed(2); }
 
@@ -2245,8 +2282,11 @@ function resize(){
   // browser never gets a freshly cleared buffer between resize and the next
   // animation frame, including during mobile URL-bar height changes.
   const prevRT = renderer.getRenderTarget();
-  const targets = [composer.renderTarget1, composer.renderTarget2, dofPass.rt, dofPass.blurRT, logoRenderTarget,
-                   bloom.prefiltered,bloom.horizontal,bloom.vertical];
+  // Phone bloom is disabled: do not allocate/clear its unused GPU buffers.
+  const targets = phoneMode
+    ? [composer.renderTarget1, composer.renderTarget2, dofPass.rt, dofPass.blurRT, logoRenderTarget]
+    : [composer.renderTarget1, composer.renderTarget2, dofPass.rt, dofPass.blurRT, logoRenderTarget,
+       bloom.prefiltered,bloom.horizontal,bloom.vertical];
   for (const rt of targets){
     if (!rt || !rt.width || !rt.height) continue;
     renderer.setRenderTarget(rt);
@@ -2255,7 +2295,9 @@ function resize(){
   renderer.setRenderTarget(prevRT);
 
   repaint();
-  repaint();
+  // One synchronous complete phone frame covers resize; retain the original
+  // double repaint for existing desktop mounts until separately verified.
+  if (!phoneMode) repaint();
 }
 function repaint(){
   // resize() can be called by adaptive quality from inside the frame loop.
@@ -2368,6 +2410,10 @@ function cameraUpdate(phi){
    off exposes hard grass edges. Optional bloom and blur resolution can fall. */
 let slow = 0, fast = 0;
 function adapt(){
+  // rAF cadence alone cannot distinguish a 30 Hz browser/power policy from
+  // GPU pressure. The phone profile keeps its explicit resolution budget fixed;
+  // it must not silently soften the whole image based on that ambiguous signal.
+  if (Q.fixedResolution) return;
   // A throttled tab looks exactly like a GPU that cannot keep up. Measured
   // here: the scene reported 20fps and demoted itself to dpr 1.19 while the
   // GPU was only 3.3ms/frame busy. Never judge performance on frames the
