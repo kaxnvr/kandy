@@ -1,0 +1,15 @@
+--- a/Website/tests/direct-unfold.test.cjs
++++ b/Website/tests/direct-unfold.test.cjs
+@@ -15,7 +15,11 @@
+     heroSec:{getBoundingClientRect:() => ({bottom:800-context.scrollY})},
+     meadow:{logoTrackLimit:400, setLogoTrack:() => {}},
+     letterFall:{setRelease:value => releases.push(value)},
+-    document:{documentElement:{dataset:{}}}, window:{}, syncMissionRunway:() => {},
++    document:{documentElement:{dataset:{}}},
++    window:{KandyPhoneProfile:{matches:false}}, syncMissionRunway:() => {},
++    handoffLayout:{heroTop:0,meadowBottom:800,trackLimit:400,fallStart:400,fallRange:1080,launchY:400},
++    measureHandoffLayout:() => assert.fail('Clipping should use the cached handoff geometry'),
++    syncGardenColourReveal:() => {},
+     clamp01:value => Math.max(0, Math.min(1, value))
+   };
+   vm.createContext(context);

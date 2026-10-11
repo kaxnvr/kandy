@@ -1,0 +1,25 @@
+{
+  "source_file": "KANDy/Website/tests/direct-unfold.test.cjs",
+  "before_sha256": "99333f9aa9af20ea2a56c875b447cd93d420e6b29caadf771278966d69ec86b8",
+  "after_sha256": "a650c999c922ed2ac3dc158c391d076f906f0b4e248f824b05a579fb46925be6",
+  "assertion_lines_retained": 28,
+  "targeted_pass": 33,
+  "targeted_fail": 0,
+  "full_suite": {
+    "tests": 188,
+    "pass": 151,
+    "fail": 37
+  },
+  "resolved_test": "letter clipping follows the visible meadow, not the hidden 100px ribbon",
+  "runtime_parity": "12/12 source-release files identical and hashes unchanged from c87a7cb delivery",
+  "online_commit": "c87a7cbb8a3bf530b313512a48b0b33d40c74f53",
+  "push": "not requested for this test-only follow-up; not performed",
+  "source_git": "source directory is not a Git repository; exact applied patch recorded in release copy local commit",
+  "remaining_failure_categories": {
+    "historical_snapshots": 12,
+    "obsolete_static_expectations": 12,
+    "mocks_and_extractors": 12,
+    "missing_playwright": 1
+  },
+  "remaining_diagnostic_comparison": "Same first causes and diagnostic text after normalizing four-line direct-unfold fixture insertion; only one clipping failure resolved."
+}

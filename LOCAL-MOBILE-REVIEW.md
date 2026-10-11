@@ -1,5 +1,15 @@
 # KANDy phone pass — 2026-10-11
 
+## Latest test-only follow-up — 2026-10-11
+
+The source direct-unfold clipping fixture is now repaired under the renewed test-file authorization. It supplies the desktop phone profile, the original cached handoff geometry and a colour-update noop; an assert.fail guard rejects unexpected geometry remeasurement. All28 original assertion lines in the source test file remain unchanged, including six forward/reverse scroll positions and exact progress, launch and clipping expectations.
+
+Current results: clipping1/1 plus phone-mode/cards/resize32/32 pass. Full source suite188 total:151 pass,37 fail. The remaining failures are12 historical snapshots,12 obsolete static expectations,12 mocks/extractors and1 missing Playwright. Their first causes and diagnostic text are unchanged, apart from four-line call-site offsets in the remaining direct-unfold cases. No tests were removed, skipped or weakened. Earlier38-failure counts and denied-fixture notes below describe the pre-repair checkpoint.
+
+The source project has no Git repository. The exact already-applied source patch is therefore recorded in the release repository at Website/tests/fixtures/direct-unfold-profile.patch, with hashes and verification beside it. The historical source test suite and its old snapshots remain source-only; this does not add non-portable historical tests to the release runner.
+
+This follow-up changes tests and records only. All12 delivered runtime/new-test files retain their published hashes. No push or deployment: the online site stays at c87a7cbb8a3bf530b313512a48b0b33d40c74f53. Physical iPhone Safari/performance validation remains outstanding. Library upload is outside this follow-up scope.
+
 Phone implementation with publication authorized to the existing KANDy GitHub Pages site through origin/main. The website is static and uses the existing legacy Pages build. Screenshot-only Library delivery is separate and was rejected for lack of destination-specific authorization. The release copy baseline is `21f4eea`; the release target is https://kaxnvr.github.io/kandy/.
 
 ## Open locally
