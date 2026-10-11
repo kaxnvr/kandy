@@ -2,7 +2,7 @@
 html[data-kandy-phone="true"] {
   --gutter:clamp(20px,5vw,28px);
   --chapter-gap:64px;
-  scroll-padding-top:80px;
+  /* Sections already reserve the fixed navigation with scroll-margin. */
 }
 html[data-kandy-phone="true"] #hero { height:min(100svh,180vw); min-height:560px; }
 html[data-kandy-phone="true"] #letterFallGL { display:none; }
@@ -83,7 +83,7 @@ html[data-kandy-phone="true"] #stores .city { font-size:clamp(22px,4.8vw,29px); 
 html[data-kandy-phone="true"] #stores .flavour { font-size:13px; margin-top:10px; }
 html[data-kandy-phone="true"] #stores .hours { font-size:12px; }
 @media (orientation:landscape) {
-  html[data-kandy-phone="true"] #hero { height:100svh; min-height:360px; }
+  html[data-kandy-phone="true"] #hero { height:100svh; min-height:0; }
   html[data-kandy-phone="true"] #hero .hero-tagline { bottom:max(16px,env(safe-area-inset-bottom)); }
   html[data-kandy-phone="true"] #hero .hero-copy .lead { font-size:15px; line-height:1.4; transform:none; }
   html[data-kandy-phone="true"] #hero .hero-cta { margin-top:10px; transform:none; }

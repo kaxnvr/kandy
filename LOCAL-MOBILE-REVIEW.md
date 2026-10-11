@@ -1,6 +1,6 @@
 # KANDy phone pass — 2026-10-11
 
-Local implementation only. Nothing was pushed, uploaded, or deployed. The release copy baseline is `21f4eea`; the public site was not modified in this pass.
+Phone implementation with publication authorized to the existing KANDy GitHub Pages site through origin/main. The website is static and uses the existing legacy Pages build. Screenshot-only Library delivery is separate and was rejected for lack of destination-specific authorization. The release copy baseline is `21f4eea`; the release target is https://kaxnvr.github.io/kandy/.
 
 ## Open locally
 
@@ -38,19 +38,45 @@ Desktop screenshots before and after use slightly different native window height
 
 ## Tests
 
-- 28/28 new phone tests and 49/49 relevant regression cases pass.
+- Initial checkpoint: 28/28 new phone tests and 49/49 relevant regression cases pass. Final pass: phone-mode, phone-cards and phone-resize execute 32/32 passing cases; hero-meadow.js syntax passes.
 - 6 changed runtime scripts and 7 HTML inline/import-map blocks pass syntax checks with bundled official Node 24.21.0.
-- Full historical suite: 184 cases, 146 pass /38 fail. Every current failure also occurs against the verified pre-change runtime. They include superseded layout snapshots, incomplete older DOM mocks and a missing Playwright dependency. No dependency was installed and these historical cases were not rewritten for this pass.
+- Full historical suite at efb0505: 184 cases, 146 pass /38 fail. Categories: 12 historical snapshots, 12 obsolete static expectations, 13 mocks/extractors, 1 missing Playwright. No additional test names failed, but this is not proof of no regression: 37 stop at the same prior first failure; 1 now hits a new missing KandyPhoneProfile mock before its older missing handoffLayout error. 25 diagnostics are identical, 5 have source-position shifts, 7 have changed source/snapshot payloads, and 1 has this changed first cause. The final full-suite rerun has188 cases:150 pass and38 fail, with four added resize cases passing. The preexisting failing set remains explicitly documented. The proposed old clipping fixture correction was again rejected by automatic approval and remains unapplied. Its assertions were not weakened and the newly exposed mock dependency is still a current test failure. Its temporary 1/1 candidate result is not counted in project totals. See failure-cause-supplement.md.
 - This is a static HTML/JS project with no configured TypeScript, lint or build package command. Syntax checks, execution tests and browser checks are the available verification; no build result is claimed.
 
 ## Evidence and rollback
 
 Source evidence lives in `Website/revisions/20261011-mobile-first/evidence/`; its JSON includes exact measurements, and TAP logs include the full-suite baseline comparison. Original files and SHA256 baseline manifest are in the same revision's `before/` and `baseline.json`.
 
-Runtime changes: `design-a-receipt.html`, `hero-meadow.js`, `garden-journey.js`, `assets/responsive-layout.js`, `assets/stores-mist.js`, and new `assets/phone-{profile.js,layout.css,cards.css,cards.js}`. The local review page is a source-only QA aid. New tests are `tests/phone-mode.test.cjs` and `tests/phone-cards.test.cjs`; source `phone-composition.test.cjs` now executes the tray behavior instead of matching an obsolete condition string.
+Runtime changes: `design-a-receipt.html`, `hero-meadow.js`, `garden-journey.js`, `assets/responsive-layout.js`, `assets/stores-mist.js`, and new `assets/phone-{profile.js,layout.css,cards.css,cards.js}`. The local review page is a source-only QA aid. New tests are `tests/phone-mode.test.cjs`, `tests/phone-cards.test.cjs` and `tests/phone-resize.test.cjs`; source `phone-composition.test.cjs` now executes the tray behavior instead of matching an obsolete condition string.
 
 ## Remaining verification
 
 - Physical iPhone Safari touch inertia, toolbar resizing, device heat and sustained FPS remain untested. DPR 2 uses more pixel work; fewer grass instances and removing a scene do not prove a frame-rate gain. Do not report 60fps or claim Safari validation.
 - Check Safari logo depth/MSAA compatibility on the target phone. Configuration readouts show requested samples, not a Safari framebuffer measurement.
 - Renderer quality is chosen at initial creation. Ordinary phone rotations remain phone mode; a true same-document phone-to-tablet mode transition restores the layout but does not rebuild the GPU scene with a different quality budget. Reload selects the appropriate initial profile.
+
+
+## Final phone QA and corrections
+
+- Removed the duplicate 80px root scroll padding; existing section scroll margins remain. Final Fridge anchor top: 83.9766px (84px margin), height544.6406px. Natural anchor/history navigation and menu auto-close were checked.
+- Short landscape hero no longer has a360px minimum. At568x320 the hero is320px high and its primary button bottom is304px.
+- Phone resize now synchronizes the camera pose before fitting the logo. The observed approximately12% rotation/cold-load scale mismatch is corrected. At932x430, fit camera and resized camera distances both10.255959; at320x568 both11.456414. The regression test executes production resize, fitLogo, cameraUpdate and repaint at four animation phases. Removing the correction makes three targeted tests fail; desktop retains its original call order.
+- Phone bag close, increment, decrement and remove controls measure at least44x44px. Adding/removing a demo item and returning the bag to empty were checked at320x568.
+- Final browser pass reviewed mission, Fridge, products, making, story, testimonials, stores, newsletter and footer. All five product modals opened with complete content and collapsed details. At390x844 collapsed content heights were599px or621px; all primary actions visible. At320x568 the gift-box modal is544px visible/618px content with zero horizontal overflow and scrollable secondary content. Expanded facts and demo notice remain reachable. Store focus animation is intentionally disabled in phone grid mode; these are static information entries.
+- Final desktop hero checked at1728x840 with phone mode absent and zero phone disclosure wrappers. Initial full desktop checks also verified original880x536 product panel,36px title and both columns. New styles/camera order changes are explicitly phone-gated. This is visual, geometry and executed-branch evidence, not exhaustive animation equivalence or pixel matching.
+- Final native-DPR2 review frame reports375x702 CSS canvas,750x1404 drawing buffer, requested logo samples2,45,360 grass instances. Actual Safari framebuffer samples, sustained FPS and heat remain unmeasured. DPR2 implies about2.19x the pixel area of1.35, so this delivery claims clarity policy and geometry reduction, not a proven FPS gain.
+
+### What scroll-follow means in this delivery
+
+The phone hero leaves with native page scrolling. Its logo track is pinned to0 in the handoff, the falling-letter model is unmounted, and all mission copy uses normal flow. Existing subtle breathing/wind remain. No new velocity-follow, inertia, damping or smoothing algorithm was implemented; the existing0.055 mouse lerp is not a touch-scroll smoother. If the request meant new delayed motion that follows a finger gesture, that effect remains unimplemented and requires a separately specified motion target. Native iPhone inertia was not tested.
+
+### Scope and parity
+
+Source-only QA: mobile-preview.html, revision backups/evidence and the updated phone-composition test. Final synchronization succeeded after renewed authorization. All12 runtime/new-test files are byte-identical between source and release; the four final phone files are included. The old direct-unfold fixture remains unchanged. The baseline is21f4eea. Work is prepared on codex/mobile-phone-20261011, then fast-forwarded to the confirmed Pages source main at repository root. Normal pushes only; unrelated sites are excluded. GitHub Pages must report success for the pushed commit before delivery.
+
+
+## Final delivery constraints
+
+- Automatic approval permitted runtime synchronization but rejected the old direct-unfold fixture write. No alternate writer or weakened assertion was used. This remains a test-maintenance blocker, not a claimed passing check. Dedicated phone handoff/desktop mapping and resize tests pass.
+- Automatic approval rejected uploading five comparison screenshots to ChatGPT Library because GitHub publication authorization did not explicitly authorize that Library payload/destination. The helper did not run, there are no Library IDs, and no alternate upload destination was used. The images remain local evidence.
+- No global gesture lock or scroll interception was introduced. Native flow removes desktop pinning and counter-scroll from phone movement, keeping the physical document and visible content coordinated. Touch inertia and Safari toolbar/heat behavior still need physical-device review.

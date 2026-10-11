@@ -134,3 +134,13 @@ html[data-kandy-phone='true'] #pdp .portfolio-bag-link { min-height:44px; }
   html[data-kandy-phone='true'] #pdp .pdp-name { font-size:27px; }
   html[data-kandy-phone='true'] #pdp .pdp-buy { gap:8px 12px; margin-top:12px; padding-top:10px; }
 }
+
+/* The bag uses the same touch target size as the product card. It can scroll
+   on short screens while the native dialog keeps the page behind it still. */
+html[data-kandy-phone='true'] .demo-bag-close { width:44px; height:44px; }
+html[data-kandy-phone='true'] .demo-bag-quantity button {
+  min-width:44px; min-height:44px; height:44px;
+}
+html[data-kandy-phone='true'] .demo-bag-quantity .demo-bag-remove {
+  min-height:44px; padding-inline:8px;
+}

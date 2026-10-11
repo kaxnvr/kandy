@@ -809,6 +809,7 @@ function fitLogo(){
   // Sized off the camera frustum at the wordmark's own depth so it holds its
   // proportion of the frame on any aspect, instead of a fixed world width.
   const dist = camera.position.z - LOGO_Z;
+  if (phoneMode) canvas.dataset.phoneLogoFitCameraDistance = dist.toFixed(6);
   const h = 2 * Math.tan(camera.fov * Math.PI/360) * dist;
   const w = h * camera.aspect;
   // Portrait has no width to spare, so the wordmark is sized off the frame
@@ -2267,6 +2268,10 @@ function resize(){
   // The bloom pass allocates its own low-resolution daylight glow buffers.
   { const el = UI('pDpr'); if (el) el.textContent = dpr.toFixed(2); }
 
+  // Fit against the new phone camera pose, including the current breathing
+  // phase. Otherwise rotation sizes the logo using the previous orientation's
+  // distance before repaint moves the camera, making cold and rotated views differ.
+  if (phoneMode) cameraUpdate(phase);
   if (logo) fitLogo();
   for (const b of fg){
     const halfH = Math.tan(camera.fov*Math.PI/360) * (CAM_BASE.z - b.position.z);
@@ -2298,6 +2303,10 @@ function resize(){
   // One synchronous complete phone frame covers resize; retain the original
   // double repaint for existing desktop mounts until separately verified.
   if (!phoneMode) repaint();
+  if (phoneMode) {
+    canvas.dataset.phoneResizeCameraDistance = (camera.position.z - LOGO_Z).toFixed(6);
+    canvas.dataset.phoneResizePhase = phase.toFixed(6);
+  }
 }
 function repaint(){
   // resize() can be called by adaptive quality from inside the frame loop.
