@@ -1,0 +1,152 @@
+[
+  {
+    "size": [
+      390,
+      700
+    ],
+    "before": {
+      "bounds": [
+        27,
+        287,
+        362,
+        384
+      ],
+      "width": 335,
+      "centreY": 335.5,
+      "pixels": 18063
+    },
+    "after": {
+      "bounds": [
+        27,
+        299,
+        362,
+        399
+      ],
+      "width": 335,
+      "centreY": 349.0,
+      "pixels": 18018
+    },
+    "shift": 13.5,
+    "distanceFromScreenCentre": -1.0
+  },
+  {
+    "size": [
+      390,
+      844
+    ],
+    "before": {
+      "bounds": [
+        25,
+        288,
+        365,
+        388
+      ],
+      "width": 340,
+      "centreY": 338.0,
+      "pixels": 18544
+    },
+    "after": {
+      "bounds": [
+        24,
+        371,
+        365,
+        470
+      ],
+      "width": 341,
+      "centreY": 420.5,
+      "pixels": 18548
+    },
+    "shift": 82.5,
+    "distanceFromScreenCentre": -1.5
+  },
+  {
+    "size": [
+      375,
+      667
+    ],
+    "before": {
+      "bounds": [
+        24,
+        272,
+        351,
+        369
+      ],
+      "width": 327,
+      "centreY": 320.5,
+      "pixels": 17113
+    },
+    "after": {
+      "bounds": [
+        24,
+        284,
+        351,
+        381
+      ],
+      "width": 327,
+      "centreY": 332.5,
+      "pixels": 17114
+    },
+    "shift": 12.0,
+    "distanceFromScreenCentre": -1.0
+  },
+  {
+    "size": [
+      430,
+      932
+    ],
+    "before": {
+      "bounds": [
+        27,
+        316,
+        402,
+        428
+      ],
+      "width": 375,
+      "centreY": 372.0,
+      "pixels": 22531
+    },
+    "after": {
+      "bounds": [
+        27,
+        410,
+        402,
+        521
+      ],
+      "width": 375,
+      "centreY": 465.5,
+      "pixels": 22515
+    },
+    "shift": 93.5,
+    "distanceFromScreenCentre": -0.5
+  },
+  {
+    "size": [
+      320,
+      568
+    ],
+    "before": {
+      "bounds": [
+        20,
+        232,
+        299,
+        313
+      ],
+      "width": 279,
+      "centreY": 272.5,
+      "pixels": 12463
+    },
+    "after": {
+      "bounds": [
+        20,
+        242,
+        299,
+        321
+      ],
+      "width": 279,
+      "centreY": 281.5,
+      "pixels": 12434
+    },
+    "shift": 9.0,
+    "distanceFromScreenCentre": -2.5
+  }
+]

@@ -23,12 +23,12 @@ function harness(phoneMode, phase = .37) {
   const events = [];
   const canvas = {clientWidth:390,clientHeight:702,dataset:{}};
   const camera = {aspect:1,fov:38,position:vector(0,.95,7.5),rotation:{z:0},
-    updateProjectionMatrix(){},lookAt(){}};
+    updateProjectionMatrix(){},lookAt(){},setViewOffset(...args){this.view=args;},clearViewOffset(){this.view=null;}};
   const logo = {userData:{halfExtent:{x:4.2,y:1.5}},
     scale:{x:1,y:1,z:1,setScalar(value){this.x=this.y=this.z=value;}}};
   let pixelRatio = 1;
   const context = {
-    phoneMode,phase,canvas,camera,logo,
+    phoneMode,phase,canvas,camera,logo,phoneViewport:null,lastPhoneViewOffset:NaN,scrollY:0,document:{activeElement:null},
     centeredPhoneLogo:{matches:true}, mobileMeadow:phoneMode,
     LOGO_Z:-2.6, TAU:Math.PI*2, CAM_BASE:vector(0,.95,7.5),LOOK_BASE:vector(0,.8,0),
     ptr:{x:0,y:0,sx:0,sy:0},Q:{dpr:phoneMode?2:1.75},devicePixelRatio:3,
@@ -93,4 +93,40 @@ test('desktop keeps its original fit-first and double-repaint call order', () =>
   assert.deepEqual(h.events,['fit','build','camera','render','build','camera','render']);
   assert.equal(h.context.canvas.dataset.phoneLogoFitCameraDistance,undefined);
   assert.equal(h.context.canvas.dataset.phoneResizeCameraDistance,undefined);
+});
+
+
+test('phone visible-height framing updates without reallocating or refitting the stable canvas', () => {
+  const h=harness(true);h.resize(390,702);h.events.length=0;
+  h.context.phoneViewport={height:844,scale:1};h.resize(390,702);
+  assert.equal(h.context.canvas.dataset.phoneViewOffset,'83.636');
+  assert.deepEqual(h.events,['build','camera','render']);
+  assert.deepEqual(h.context.camera.view,[390,702,0,-83.636,390,702]);
+  h.events.length=0;h.resize(390,702);assert.deepEqual(h.events,[]);
+});
+
+test('phone framing does not chase scroll, pinch zoom or a focused input', () => {
+  const h=harness(true);h.resize(390,702);
+  h.context.phoneViewport={height:844,scale:1};h.context.scrollY=120;h.resize(390,702);
+  assert.equal(h.context.canvas.dataset.phoneViewOffset,'12.636');
+  h.context.scrollY=0;h.context.phoneViewport.scale=2;h.resize(390,702);
+  assert.equal(h.context.canvas.dataset.phoneViewOffset,'12.636');
+  h.context.phoneViewport.scale=1;h.context.document.activeElement={matches:()=>true};h.resize(390,702);
+  assert.equal(h.context.canvas.dataset.phoneViewOffset,'12.636');
+  h.context.document.activeElement=null;h.context.restorePhoneFraming();
+  assert.equal(h.context.canvas.dataset.phoneViewOffset,'83.636');
+});
+
+test('rotation clears portrait framing and desktop never applies a view offset', () => {
+  const phone=harness(true);phone.resize(390,702);phone.resize(844,390);
+  assert.equal(phone.context.camera.view,null);
+  assert.equal(phone.context.canvas.dataset.phoneViewOffset,'0.000');
+  const desktop=harness(false);desktop.resize(1440,900);desktop.resize(390,702);
+  assert.equal(desktop.context.camera.view,undefined);
+  assert.equal(desktop.context.canvas.dataset.phoneViewOffset,undefined);
+});
+
+test('extreme phone heights bound framing to preserve the overlay region', () => {
+  const h=harness(true);h.context.phoneViewport={height:1400,scale:1};h.resize(390,702);
+  assert.equal(h.context.canvas.dataset.phoneViewOffset,'126.360');
 });

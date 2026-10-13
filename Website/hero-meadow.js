@@ -2186,6 +2186,8 @@ addEventListener('pointerleave', () => { ptr.x = 0; ptr.y = 0; });
 const portrait = () => camera.aspect < 0.92;
 let dprScale = 1, painting = false;
 let lastW = 0, lastH = 0, lastDprScale = -1;
+let lastPhoneViewOffset = NaN;
+const phoneViewport = phoneMode ? window.visualViewport : null;
 
 function resize(){
   // Sized off the canvas's own box, not the window: mounted in the page the
@@ -2193,12 +2195,35 @@ function resize(){
   // slides away without the window ever firing a resize.
   const w = canvas.clientWidth  || innerWidth;
   const h = canvas.clientHeight || innerHeight;
+  // The stable phone hero can be shorter than the visible screen. Centre the
+  // scenery in that screen, plus a small optical correction for grass hiding
+  // the lower lettering. Off-axis framing preserves scale and world occlusion.
+  // Ignore pinch zoom; never compensate scrollY or translate the page itself.
+  const phonePortrait = phoneMode && centeredPhoneLogo?.matches && w < h;
+  const visibleHeight = phoneViewport && Math.abs(phoneViewport.scale - 1) < .01
+    ? phoneViewport.height : innerHeight;
+  const holdFraming = phonePortrait && Number.isFinite(lastPhoneViewOffset)
+    && w === lastW && h === lastH && (scrollY > 1
+      || (phoneViewport && Math.abs(phoneViewport.scale - 1) >= .01)
+      || document.activeElement?.matches('input,textarea,select,[contenteditable="true"]'));
+  const viewOffset = holdFraming ? lastPhoneViewOffset : phonePortrait
+    ? Math.max(-h * .1, Math.min(h * .18, (visibleHeight - h) * .5 + h * .018)) : 0;
+  const framingChanged = phoneMode && (w !== lastW || h !== lastH || viewOffset !== lastPhoneViewOffset);
+  if (framingChanged) {
+    if (phonePortrait) camera.setViewOffset(w, h, 0, -viewOffset, w, h);
+    else camera.clearViewOffset();
+    lastPhoneViewOffset = viewOffset;
+    canvas.dataset.phoneViewOffset = viewOffset.toFixed(3);
+  }
   // Rebuilding every render target — the composer's pair, the DOF target with
   // its depth texture, and bloom's eleven mip levels — is the single most
   // expensive thing in this file, and a page mounts a ResizeObserver that can
   // fire on events that did not actually change the box. Doing that work for a
   // size we are already at is pure jank, so bail unless something moved.
-  if (w === lastW && h === lastH && dprScale === lastDprScale) return;
+  if (w === lastW && h === lastH && dprScale === lastDprScale) {
+    if (framingChanged) repaint(); // URL-bar-only resize: no buffer allocation.
+    return;
+  }
   lastW = w; lastH = h; lastDprScale = dprScale;
   camera.aspect = w/h;
   // The close-up grass carpet is deliberately portrait-only. Toggle it from
@@ -2315,7 +2340,10 @@ function repaint(){
   try { build(phase); cameraUpdate(phase); renderComposite(); }
   finally { painting = false; }
 }
+function restorePhoneFraming(){ if (scrollY <= 1) resize(); }
 addEventListener('resize', resize);
+phoneViewport?.addEventListener('resize', resize);
+if (phoneMode) addEventListener('scroll', restorePhoneFraming, { passive:true });
 
 /* ─────────────────────────── the frame ─────────────────────────── */
 const fract = v => v - Math.floor(v);
@@ -2555,6 +2583,8 @@ return {
     }
   },
   dispose(){
+    phoneViewport?.removeEventListener('resize', resize);
+    if (phoneMode) removeEventListener('scroll', restorePhoneFraming);
     meadowDisposed=true;
     cancelAnimationFrame(raf);
     logoCompositeQuad.dispose();
