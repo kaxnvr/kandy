@@ -354,6 +354,11 @@
   reduced.addEventListener('change', refresh);
   document.fonts?.ready.then(refresh);
 
+  // Keep old mission links useful when that chapter is omitted on phones.
+  function resolveAnchor(id) {
+    return window.KandyPhoneProfile?.matches && id === 'missionStory' ? 'story' : id;
+  }
+
   // Anchors now resolve to scroll positions along the track, rather than the
   // identical document-top shared by the two horizontally arranged panels.
   document.addEventListener('click', event => {
@@ -361,7 +366,14 @@
     if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     releaseArrivalPause();
     lastWheelAt = -Infinity;
-    const id = link.getAttribute('href').slice(1);
+    const originalId = link.getAttribute('href').slice(1);
+    const id = resolveAnchor(originalId);
+    if (id !== originalId) {
+      event.preventDefault();
+      history.pushState(null, '', `#${id}`);
+      restoreAnchor(reduced.matches ? 'instant' : 'smooth');
+      return;
+    }
     if (!goTo(id)) return;
     event.preventDefault();
     history.pushState(null, '', `#${id}`);
@@ -373,13 +385,15 @@
   function restoreAnchor(behavior = 'instant') {
     releaseArrivalPause();
     lastWheelAt = -Infinity;
-    const id = location.hash.slice(1);
+    const originalId = location.hash.slice(1);
+    const id = resolveAnchor(originalId);
+    if (id !== originalId) history.replaceState(null, '', `#${id}`);
     if (!id || goTo(id,behavior)) return;
     document.getElementById(id)?.scrollIntoView({behavior,block:'start'});
   }
   addEventListener('hashchange', () => {
     // Phone anchors already use native navigation and history restoration.
-    if (!window.KandyPhoneProfile?.matches) restoreAnchor(reduced.matches?'instant':'smooth');
+    if (!window.KandyPhoneProfile?.matches || location.hash === '#missionStory') restoreAnchor(reduced.matches?'instant':'smooth');
   });
   // Fonts and the meadow's measured mission runway settle during loading.
   // Honor an initial #products link once that preceding layout is final.

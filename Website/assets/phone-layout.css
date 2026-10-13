@@ -6,28 +6,10 @@ html[data-kandy-phone="true"] {
 }
 html[data-kandy-phone="true"] #hero { height:min(100svh,180vw); min-height:560px; }
 html[data-kandy-phone="true"] #letterFallGL { display:none; }
+/* Remove the whole editorial chapter from phone flow, including its pin runway.
+   The original sentences and desktop choreography remain in the document. */
 html[data-kandy-phone="true"] #missionStory {
-  height:auto !important; min-height:0; padding:44px var(--gutter) 40px;
-  margin:0; overflow:visible;
-}
-html[data-kandy-phone="true"] #missionStory .mission-pin {
-  position:relative; top:auto; height:auto; min-height:0; display:block;
-}
-html[data-kandy-phone="true"] #missionStory .mission-copy {
-  height:auto; min-height:0; max-height:none; max-width:34ch; margin:0 auto;
-  padding:0; display:grid; gap:15px; transform:none;
-}
-html[data-kandy-phone="true"] #missionStory .mission-line {
-  display:block; position:static; inset:auto; width:auto; max-width:none;
-  margin:0; font-size:clamp(19px,5.1vw,23px); line-height:1.3;
-  text-align:left; transform:none !important; filter:none !important;
-  opacity:1 !important; color:var(--ink-2); transition:none;
-}
-html[data-kandy-phone="true"] #missionStory .mission-line:first-child {
-  font-size:clamp(25px,6.7vw,31px); line-height:1.14; color:var(--ink);
-}
-html[data-kandy-phone="true"] #missionStory .mission-line:nth-child(n+5) {
-  font-size:15px; line-height:1.45; color:var(--ink-3);
+  display:none; height:0 !important; min-height:0; margin:0; padding:0;
 }
 html[data-kandy-phone="true"] #tray.tray-sec {
   margin-top:0; padding:0 var(--gutter) 48px;
@@ -88,7 +70,6 @@ html[data-kandy-phone="true"] #stores .hours { font-size:12px; }
   html[data-kandy-phone="true"] #hero .hero-copy .lead { font-size:15px; line-height:1.4; transform:none; }
   html[data-kandy-phone="true"] #hero .hero-cta { margin-top:10px; transform:none; }
   html[data-kandy-phone="true"] #hero .scroll-hint { display:none; }
-  html[data-kandy-phone="true"] #missionStory .mission-copy { max-width:56ch; }
   html[data-kandy-phone="true"] #stores .air-field { grid-template-columns:repeat(3,minmax(0,1fr)); }
   html[data-kandy-phone="true"] #stores .air-node:last-of-type { grid-column:1 / -1; }
 }

@@ -113,15 +113,32 @@ test('combined media never briefly mounts desktop scenes when dependent events a
   assert.deepEqual(changes,[]);
 });
 
-test('mission phone flow keeps every original sentence in readable normal flow', () => {
+test('phone omits the mission chapter and its space while desktop retains all six sentences', () => {
   const mission=html.slice(html.indexOf('<section class="mission mission-story'),html.indexOf('<!-- ================= GIFT TRAY'));
   assert.equal([...mission.matchAll(/<p class="mission-line">/g)].length,6);
   const css=read('assets/phone-layout.css');
-  const rule=css.match(/html\[data-kandy-phone="true"\] #missionStory \.mission-line \{([^}]+)\}/)?.[1];
+  const rule=css.match(/html\[data-kandy-phone="true"\] #missionStory \{([^}]+)\}/)?.[1];
   assert.ok(rule);
-  for(const declaration of ['display:block','position:static','filter:none !important','opacity:1 !important']) assert.ok(rule.includes(declaration));
-  const phone=html.includes('if (!missionStory || !missionLines.length || window.KandyPhoneProfile?.matches) return;');
-  assert.equal(phone,true,'desktop scroll writer must leave phone sentence styles alone');
+  for(const declaration of ['display:none','height:0 !important','min-height:0','margin:0','padding:0']) assert.ok(rule.includes(declaration));
+  assert.ok(html.includes('if (!missionStory || !missionLines.length || window.KandyPhoneProfile?.matches) return;'));
+});
+
+test('garden entrance measures the first visible phone section and preserves the desktop mission boundary', () => {
+  for(const phone of [true,false]) {
+    let top=900;
+    const calls=[];
+    const visible={getBoundingClientRect:()=>({top})};
+    const unused={getBoundingClientRect:()=>assert.fail('must not measure the other presentation')};
+    const context={window:{KandyPhoneProfile:{matches:phone}},innerHeight:844,
+      phoneGardenEntrance:phone?visible:unused,missionEntrance:phone?unused:visible,
+      gardenPausedForHero:undefined,garden:{setPaused:value=>calls.push(value)}};
+    vm.createContext(context);
+    vm.runInContext(functionSource('syncGardenEntrance'),context);
+    context.syncGardenEntrance();context.syncGardenEntrance();
+    top=700;context.syncGardenEntrance();
+    top=900;context.syncGardenEntrance();
+    assert.deepEqual(calls,[true,false,true]);
+  }
 });
 
 test('phone handoff does not measure a falling-letter runway or counter-scroll the wordmark', () => {

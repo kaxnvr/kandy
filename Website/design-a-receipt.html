@@ -1632,7 +1632,7 @@
 <link rel="stylesheet" href="./assets/responsive-layout.css?v=20261008-phone-landscape-2">
 <script defer src="./assets/responsive-layout.js?v=20260928-1"></script>
 <link rel="stylesheet" href="./assets/portfolio-demo.css?v=20261008-1">
-<link rel="stylesheet" href="./assets/phone-layout.css?v=20261011-1">
+<link rel="stylesheet" href="./assets/phone-layout.css?v=20261013-no-mission-1">
 <link rel="stylesheet" href="./assets/phone-cards.css?v=20261011-1">
 <script defer src="./assets/phone-cards.js?v=20261011-1"></script>
 </head>
@@ -2389,7 +2389,7 @@
   <p class="demo-bag-status" id="demoBagStatus" role="status" aria-atomic="true"></p>
 </dialog>
 <script src="./assets/portfolio-demo.js?v=20261008-1"></script>
-<script src="./garden-journey.js?v=20261001-short-desktop-1"></script>
+<script src="./garden-journey.js?v=20261013-phone-mission-anchor-1"></script>
 <script src="./assets/stores-mist.js?v=20260920-3"></script>
 <script>
   var nav = document.getElementById('nav');
@@ -3598,9 +3598,12 @@ window.__softGardenBackground = garden;
 // Keep it asleep while the hero still covers the whole viewport.
 await garden.ready;
 const missionEntrance = document.getElementById('missionStory');
+const phoneGardenEntrance = document.getElementById('tray');
 let gardenPausedForHero;
 function syncGardenEntrance() {
-  const shouldPause = missionEntrance.getBoundingClientRect().top > innerHeight - 24;
+  // The phone skips the mission chapter; measure its next visible section.
+  const entrance = window.KandyPhoneProfile.matches ? phoneGardenEntrance : missionEntrance;
+  const shouldPause = entrance.getBoundingClientRect().top > innerHeight - 24;
   if (shouldPause === gardenPausedForHero) return;
   gardenPausedForHero = shouldPause;
   garden.setPaused?.(shouldPause);
