@@ -3381,7 +3381,7 @@ addEventListener('pagehide', event => {
 // Start both dependency graphs together, but contain a failed download or a
 // synchronous WebGL startup error. Neither may strand the real loader at 98%.
 const sceneSources = Promise.allSettled([
-  import('./hero-meadow.js?v=20261008-phone-orientation-2'),
+  import('./hero-meadow.js?v=20261013-phone-centre-8469d10'),
   import('./kandy-letter-fall.js?v=performance-2')
 ]);
 
