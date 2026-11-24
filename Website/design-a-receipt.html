@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KANDy — Confections from the Manor Garden</title>
-<script src="./assets/phone-profile.js?v=20261011-1"></script>
+<script src="./assets/phone-profile.js?v=20261124-30fps-1"></script>
 <meta name="description" content="Confections from an English manor garden. Small-batch, hand-shaped, grown before it was made.">
 <link rel="canonical" href="https://kaxnvr.github.io/kandy/">
 <meta property="og:type" content="website">
@@ -3369,7 +3369,7 @@ const responsiveReceipt = mountResponsiveReceipt({
   async load() {
     await window.__kandyLoader?.painted;
     await window.__kandyLoader?.artPainted;
-    return import('../receipt/receipt-unroll.js?v=receipt-curve-follow-20260918');
+    return import('../receipt/receipt-unroll.js?v=receipt-30fps-20261124');
   },
   mount: mountReceiptScene,
   onError(error) {

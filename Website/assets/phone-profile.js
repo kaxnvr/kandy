@@ -46,4 +46,43 @@
   window.KandyPhoneProfile = profile;
   media.addEventListener('change', sync);
   sync();
+
+  /* Phones run every scripted animation on one steady 30fps beat. A fixed,
+     even cadence keeps low-end phones from wobbling between 60 and 20fps,
+     and halves the meadow/receipt GPU work. 30 is the steady form of a
+     ~29.97 target: a browser can only present on a display refresh, so an
+     exact 29.97 cap would drop a frame every few seconds instead.
+     Native scrolling and CSS animations are not driven by rAF and stay at
+     the display rate. This runs before every other script on the page. */
+  const nativeRequest = window.requestAnimationFrame.bind(window);
+  const interval = 1000 / 30;
+  const queue = new Map();
+  let nextId = 0, scheduled = false, lastBeat = 0;
+  function beat(now) {
+    scheduled = false;
+    // 4ms slack absorbs vsync jitter: on 60Hz every second refresh is a beat,
+    // on 120Hz every fourth.
+    if (isPhone() && lastBeat && now - lastBeat < interval - 4) {
+      if (queue.size) { scheduled = true; nativeRequest(beat); }
+      return;
+    }
+    lastBeat = now;
+    const due = Array.from(queue.values());
+    queue.clear();
+    for (const callback of due) {
+      try { callback(now); }
+      catch (error) { setTimeout(() => { throw error; }); }
+    }
+  }
+  window.requestAnimationFrame = function requestAnimationFrame(callback) {
+    const id = ++nextId;
+    queue.set(id, callback);
+    if (!scheduled) { scheduled = true; nativeRequest(beat); }
+    return id;
+  };
+  window.cancelAnimationFrame = function cancelAnimationFrame(id) { queue.delete(id); };
+  window.KandyFramePacer = {
+    fps: 30,
+    get active() { return isPhone(); }
+  };
 })();

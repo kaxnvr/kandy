@@ -919,7 +919,9 @@ export class ReceiptUnroll {
   /* 连续 2 秒低于 38fps 就降一档 */
   _checkDegrade() {
     if (this._degraded) return;
-    if (this.fps < 38) this._lowStreak++; else this._lowStreak = 0;
+    /* 手机统一锁 30fps 时，30 是目标不是卡顿；只有掉到 25 以下才算真的慢。 */
+    const floor = window.KandyFramePacer?.active ? 25 : 38;
+    if (this.fps < floor) this._lowStreak++; else this._lowStreak = 0;
     if (this._lowStreak < 4) return;
     this._lowStreak = 0;
     const order = ['hi', 'md', 'lo'];

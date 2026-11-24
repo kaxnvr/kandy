@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KANDy — Phone chapters (preview B)</title>
+<link rel="icon" href="./assets/web/optimized/kandy-k-favicon-20261008.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:#FBF3E2; --paper:#FFFDF9;
+    --moss:#3F5C42; --moss-deep:#2C4230; --moss-soft:#E3ECDD;
+    --peach:#F0875C; --peach-deep:#D66B41;
+    --citrine:#D6A93A; --citrine-deep:#B5872A;
+    --rose:#E985AF; --rose-light:#FCB7DD; --rose-deep:#BF557D;
+    --ink:#2B2620; --ink-2:#4A423A; --ink-3:rgba(43,38,32,.62);
+    --ease:cubic-bezier(.25,.1,.25,1);
+    --rise:cubic-bezier(.2,.72,.24,1);
+    --top:calc(env(safe-area-inset-top) + 76px);
+    --bottom:calc(env(safe-area-inset-bottom) + 22px);
+    --side:20px;
+    --glass:linear-gradient(150deg,rgba(255,255,255,.82),rgba(255,255,255,.58));
+    --glass-edge:rgba(255,255,255,.75);
+    --shadow:0 22px 50px -28px rgba(43,38,32,.45);
+  }
+  * { box-sizing:border-box; }
+  html { scroll-snap-type:y mandatory; overscroll-behavior-y:none; background:#EEF1E6; }
+  body {
+    margin:0; color:var(--ink); -webkit-font-smoothing:antialiased;
+    font:400 16px/1.5 'Lato',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-tap-highlight-color:transparent;
+    background:
+      radial-gradient(120% 60% at 15% 0%,rgba(252,183,221,.35),transparent 60%),
+      radial-gradient(120% 70% at 100% 40%,rgba(227,236,221,.95),transparent 65%),
+      linear-gradient(180deg,#F6F2E8 0%,#E9EFE2 45%,#E2EBDD 100%);
+    background-attachment:fixed;
+  }
+  h1,h2,h3 { margin:0; font-family:'Marcellus',Georgia,serif; font-weight:400; letter-spacing:-.008em; }
+  p { margin:0; }
+  button { font:inherit; color:inherit; }
+  img { display:block; max-width:100%; }
+
+  /* ───── chapters ───── */
+  .ch {
+    position:relative; height:100svh; min-height:540px;
+    scroll-snap-align:start; scroll-snap-stop:always;
+    overflow:hidden;
+    padding:var(--top) var(--side) var(--bottom);
+    display:flex; flex-direction:column;
+  }
+  .eyebrow { font-size:12px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--citrine-deep); }
+  .title { font-size:clamp(28px,8.4vw,36px); line-height:1.12; margin-top:8px; }
+  .lead { font-size:16px; line-height:1.55; color:var(--ink-3); margin-top:10px; }
+
+  /* Entrance: each chapter's pieces rise once it settles into view. */
+  .rv { opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .8s var(--rise); transition-delay:calc(var(--d,0) * 90ms); }
+  .ch.in .rv { opacity:1; transform:none; }
+
+  /* ───── nav + progress ───── */
+  .nav {
+    position:fixed; z-index:50; left:12px; right:12px; top:calc(env(safe-area-inset-top) + 10px);
+    height:52px; display:flex; align-items:center; gap:10px; padding:0 8px 0 16px;
+    border-radius:999px; border:1px solid var(--glass-edge);
+    background:rgba(250,251,247,.72); -webkit-backdrop-filter:blur(18px) saturate(1.3); backdrop-filter:blur(18px) saturate(1.3);
+    box-shadow:0 10px 30px -18px rgba(43,38,32,.4);
+  }
+  .nav img { height:24px; width:auto; }
+  .nav-chapter { flex:1; min-width:0; font-size:13px; color:var(--ink-3); letter-spacing:.02em; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:opacity .3s; }
+  .nav-bag { height:38px; padding:0 14px; border:0; border-radius:999px; background:var(--ink); color:var(--paper); font-size:14px; display:flex; align-items:center; gap:7px; }
+  .nav-bag b { min-width:18px; height:18px; border-radius:9px; background:var(--rose-light); color:var(--ink); font-size:11px; display:inline-flex; align-items:center; justify-content:center; }
+  .progress {
+    position:fixed; z-index:40; right:7px; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:7px;
+  }
+  .progress i { width:4px; height:4px; border-radius:2px; background:rgba(43,38,32,.22); transition:height .4s var(--rise), background .3s; }
+  .progress i.on { height:18px; background:var(--rose-deep); }
+  .progress.light i { background:rgba(255,255,255,.45); }
+  .progress.light i.on { background:#fff; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:48px; padding:0 22px; border-radius:999px; border:0; font-size:16px; text-decoration:none; cursor:pointer; }
+  .btn-dark { background:var(--ink); color:var(--paper); }
+  .btn-cream { background:var(--paper); color:var(--ink); box-shadow:0 10px 24px -14px rgba(0,0,0,.5); }
+  .btn-glass { color:#fff; border:1px solid rgba(255,255,255,.55); background:rgba(255,255,255,.16); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
+  .next-hint { margin-top:auto; align-self:center; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .next-hint::after { content:""; width:1px; height:18px; background:currentColor; animation:hint 2.4s var(--ease) infinite; transform-origin:top; }
+  @keyframes hint { 0%{transform:scaleY(0)} 50%{transform:scaleY(1)} 100%{transform:scaleY(1);opacity:0} }
+
+  /* ───── 1 hero ───── */
+  .hero { padding:0; color:#fff; }
+  .hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 70%; filter:blur(14px) saturate(1.1); transform:scale(1.2); }
+  .hero-logo { position:absolute; z-index:1; left:50%; top:42%; width:min(88vw,420px); transform:translate(-50%,-50%) translateY(26px) scale(.94); opacity:0; filter:drop-shadow(0 24px 30px rgba(120,40,80,.28));
+    transition:transform 1.4s var(--rise), opacity 1s var(--ease); }
+  .hero.in .hero-logo { transform:translate(-50%,-50%); opacity:1; animation:float 6s var(--ease) 1.4s infinite; }
+  @keyframes float { 0%,100%{translate:0 0} 50%{translate:0 -8px} }
+  .hero::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(28,40,24,.55) 100%); }
+  .hero-copy { position:absolute; z-index:2; left:var(--side); right:var(--side); bottom:calc(var(--bottom) + 44px); text-align:center; }
+  .hero-copy p { font-size:18px; line-height:1.45; text-shadow:0 1px 12px rgba(0,0,0,.25); }
+  .hero-cta { display:flex; gap:10px; justify-content:center; margin-top:18px; }
+  .hero-cta .btn { white-space:nowrap; }
+  @media (max-width:360px) { .hero-cta .btn { padding:0 16px; font-size:15px; } }
+  .hero .next-hint { position:absolute; z-index:2; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 6px); color:rgba(255,255,255,.85); }
+  .hero-note { position:absolute; z-index:2; top:calc(env(safe-area-inset-top) + 74px); left:var(--side); right:var(--side); text-align:center; font-size:11px; letter-spacing:.06em; color:rgba(255,255,255,.8); }
+
+  /* ───── 2 mission ───── */
+  .mission { justify-content:center; gap:clamp(18px,4.5svh,34px); }
+  .mission p { font-family:'Marcellus',serif; font-size:clamp(23px,6.6vw,30px); line-height:1.25; max-width:15ch; filter:blur(8px); opacity:0; transform:translateY(14px);
+    transition:opacity 1s var(--ease), filter 1.1s var(--ease), transform 1.1s var(--rise); transition-delay:calc(var(--d) * 420ms + 150ms); }
+  .mission p:nth-child(even) { align-self:flex-end; text-align:right; }
+  .mission p:nth-child(2) { color:var(--moss); }
+  .mission p:nth-child(3) { color:var(--rose-deep); }
+  .mission.in p { opacity:1; filter:none; transform:none; }
+
+  /* ───── 3 fridge ───── */
+  .fridge { padding-left:0; padding-right:0; }
+  .fridge-photo { position:relative; flex:1 1 auto; min-height:0; margin:0 var(--side); border-radius:28px; overflow:hidden; box-shadow:var(--shadow); }
+  .fridge-photo img { width:100%; height:100%; object-fit:cover; object-position:50% 30%; }
+  .fridge-card {
+    position:relative; z-index:2; margin:-58px 12px 0; padding:20px 20px 18px;
+    border-radius:26px; border:1px solid var(--glass-edge); background:var(--glass);
+    -webkit-backdrop-filter:blur(24px) saturate(1.15); backdrop-filter:blur(24px) saturate(1.15); box-shadow:var(--shadow);
+  }
+  .fridge-card .title { font-size:clamp(25px,7.2vw,30px); }
+  .facts { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px; }
+  .facts li { list-style:none; padding:10px 10px 9px; border-radius:14px; background:rgba(255,255,255,.7); }
+  .facts b { display:block; font:400 24px/1 'Marcellus',serif; }
+  .facts span { display:block; margin-top:5px; font-size:11.5px; line-height:1.25; color:var(--ink-3); }
+  .facts { padding:0; margin-bottom:0; }
+  .fridge-card .btn { width:100%; margin-top:14px; }
+
+  /* ───── 4 collection deck ───── */
+  .collection { align-items:center; text-align:center; }
+  .deck { position:relative; flex:1 1 auto; width:100%; min-height:0; margin-top:14px; touch-action:pan-y; user-select:none; -webkit-user-select:none; }
+  .card {
+    position:absolute; left:50%; top:50%; width:min(72vw,270px); aspect-ratio:3 / 4.35; max-height:100%;
+    border-radius:26px; padding:16px 16px 18px; display:flex; flex-direction:column; align-items:center; text-align:center;
+    background:var(--paper); border:1px solid rgba(255,255,255,.9); box-shadow:0 26px 50px -30px rgba(43,38,32,.6);
+    transform:translate(-50%,-50%) translateX(calc(var(--o) * 22px)) translateY(calc(var(--a) * 10px)) rotate(calc(var(--o) * 4deg)) scale(calc(1 - var(--a) * .05));
+    z-index:calc(10 - var(--a)); opacity:calc(1 - var(--a) * .18);
+    transition:transform .55s var(--rise), opacity .4s var(--ease);
+  }
+  .card.dragging { transition:none; }
+  .card.hero-card { background:linear-gradient(160deg,#3A342C,#211D18); color:var(--paper); }
+  .card .pic { width:100%; flex:1 1 auto; min-height:0; border-radius:18px; overflow:hidden; background:#9fd0ef; }
+  .card .pic img { width:100%; height:100%; object-fit:cover; }
+  .card .flavor { margin-top:12px; font-size:13px; color:var(--ink-3); }
+  .card.hero-card .flavor { color:rgba(255,253,249,.65); }
+  .card h3 { font-size:21px; margin-top:3px; }
+  .card .row { display:flex; gap:12px; align-items:center; margin-top:8px; font-size:14px; }
+  .card .row b { font-size:15px; }
+  .card .row span { color:var(--moss-deep); }
+  .card.hero-card .row span { color:var(--rose-light); }
+  .card .ribbon { position:absolute; top:22px; left:22px; z-index:2; padding:4px 10px; border-radius:999px; background:var(--citrine); color:var(--ink); font-size:12px; font-weight:700; }
+  .deck-foot { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:12px; }
+  .deck-foot button { width:44px; height:44px; border-radius:50%; border:1px solid rgba(43,38,32,.14); background:rgba(255,255,255,.7); font-size:18px; }
+  .deck-count { font-size:13px; color:var(--ink-3); min-width:54px; }
+  .swipe-tip { font-size:12.5px; color:var(--ink-3); margin-top:6px; }
+
+  /* ───── 5 process (story taps) ───── */
+  .process { text-align:left; }
+  .bars { display:flex; gap:5px; margin-top:16px; }
+  .bars i { flex:1; height:3px; border-radius:2px; background:rgba(43,38,32,.14); overflow:hidden; position:relative; }
+  .bars i::after { content:""; position:absolute; inset:0; background:var(--moss); transform:scaleX(var(--f,0)); transform-origin:left; transition:transform .45s var(--rise); }
+  .step-stage { position:relative; flex:1 1 auto; min-height:0; margin-top:16px; }
+  .step {
+    position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:22px;
+    border-radius:28px; border:1px solid var(--glass-edge); background:var(--glass);
+    -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px); box-shadow:var(--shadow);
+    opacity:0; transform:translateX(26px) scale(.98); pointer-events:none;
+    transition:opacity .45s var(--ease), transform .6s var(--rise);
+  }
+  .step.on { opacity:1; transform:none; pointer-events:auto; }
+  .step.off { transform:translateX(-26px) scale(.98); }
+  .step .num { font-size:13px; font-weight:700; letter-spacing:.14em; color:var(--rose-deep); }
+  .step h3 { font-size:40px; margin-top:4px; }
+  .step svg { width:clamp(96px,30svh,150px); height:auto; margin:clamp(8px,3svh,26px) auto; overflow:visible; }
+  .step .summary { font:400 21px/1.3 'Marcellus',serif; }
+  .step .detail { margin-top:8px; font-size:15px; color:var(--ink-3); }
+  .tap-zones { position:absolute; inset:0; display:grid; grid-template-columns:1fr 2fr; z-index:3; }
+  .tap-zones button { border:0; background:transparent; }
+  .step-tip { margin-top:10px; font-size:12.5px; color:var(--ink-3); text-align:center; }
+  .a-petal,.a-steam,.a-stamp,.a-lid,.a-bow { transform-box:view-box; }
+  .a-petal { transform-origin:50px 76px; animation:a-petal-sway 3.6s var(--ease) infinite; }
+  .a-steam { animation:a-steam-rise 3.6s var(--ease) infinite; }
+  .a-steam-2 { animation-delay:-1.2s; } .a-steam-3 { animation-delay:-2.4s; }
+  .a-stamp { animation:a-stamp-contact 3.6s var(--ease) infinite; }
+  .a-lid { transform-origin:50px 42px; animation:a-lid-settle 3.6s var(--ease) infinite; }
+  .a-bow { transform-origin:50px 32px; animation:a-bow-cinch 3.6s var(--ease) infinite; }
+  @keyframes a-petal-sway { 0%,16%,100%{transform:rotate(-9deg)} 45%,60%{transform:rotate(11deg)} }
+  @keyframes a-steam-rise { 0%,8%{opacity:0;transform:translateY(7px)} 28%{opacity:.9} 68%,100%{opacity:0;transform:translateY(-15px)} }
+  @keyframes a-stamp-contact { 0%,16%,100%{transform:translateY(-2px)} 44%,58%{transform:translateY(6.2px)} 84%{transform:translateY(-2px)} }
+  @keyframes a-lid-settle { 0%,100%{transform:translateY(0) rotate(0)} 25%,45%{transform:translateY(-13px) rotate(-7deg)} 68%{transform:translateY(1px) rotate(0)} }
+  @keyframes a-bow-cinch { 0%,55%,100%{transform:scaleX(1)} 72%{transform:scaleX(1.2)} 85%{transform:scaleX(.95)} }
+
+  /* ───── 6 numbers + receipt ───── */
+  .numbers { padding-left:0; padding-right:0; }
+  .numbers > .head { padding:0 var(--side); }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px var(--side) 0; position:relative; z-index:2; }
+  .stat { padding:16px 14px; border-radius:20px; border:1px solid var(--glass-edge); background:var(--glass); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
+  .stat b { display:block; font:400 clamp(34px,10vw,42px)/1 'Marcellus',serif; }
+  .stat span { display:block; margin-top:6px; font-size:13px; color:var(--ink-3); }
+  .receipt-slot { position:relative; flex:1 1 auto; min-height:0; margin-top:-6px; overflow:hidden; }
+  .receipt-slot img { position:absolute; left:50%; top:0; width:min(62vw,240px); transform:translate(-50%,-78%) rotate(-3deg); transform-origin:top center; filter:drop-shadow(0 18px 24px rgba(43,38,32,.28)); transition:transform 2.4s var(--rise) .35s; }
+  .numbers.in .receipt-slot img { transform:translate(-50%,-6%) rotate(-3deg); }
+  .receipt-caption { position:absolute; left:50%; bottom:4px; transform:translateX(-50%); white-space:nowrap; padding:7px 14px; border-radius:999px; background:rgba(255,253,249,.92); box-shadow:0 8px 20px -12px rgba(43,38,32,.45); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); }
+
+  /* ───── 7 story ───── */
+  .story { padding-left:0; padding-right:0; }
+  .story-photo { flex:1 1 auto; min-height:0; margin:0 var(--side); border-radius:28px; overflow:hidden; box-shadow:var(--shadow); }
+  .story-photo img { width:100%; height:100%; object-fit:cover; }
+  .story-copy { padding:18px var(--side) 0; }
+  .story-copy .lead { font-size:15.5px; }
+  .link { display:inline-flex; align-items:center; gap:6px; margin-top:12px; min-height:44px; color:var(--moss-deep); text-decoration:none; font-size:16px; }
+
+  /* ───── 8 reviews ───── */
+  .reviews { padding-left:0; padding-right:0; }
+  .reviews > .head { padding:0 var(--side); }
+  .rail { flex:1 1 auto; min-height:0; display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; padding:18px var(--side) 8px; scrollbar-width:none; overscroll-behavior-x:contain; }
+  .rail::-webkit-scrollbar { display:none; }
+  .review { flex:0 0 calc(100% - 28px); scroll-snap-align:center; display:flex; flex-direction:column; padding:24px 22px; border-radius:28px; border:1px solid var(--glass-edge); background:var(--glass); -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px); box-shadow:var(--shadow); }
+  .review header { display:flex; align-items:center; gap:12px; }
+  .review header img { width:48px; height:48px; border-radius:50%; object-fit:cover; }
+  .review header b { display:block; font-size:16px; }
+  .review header small { color:var(--citrine-deep); font-size:13px; letter-spacing:.06em; }
+  .review blockquote { margin:auto 0; padding:18px 0; font:400 clamp(21px,6vw,25px)/1.35 'Marcellus',serif; }
+  .review footer { font-size:13px; color:var(--ink-3); }
+  .rail-count { text-align:center; font-size:13px; color:var(--ink-3); margin-top:6px; }
+
+  /* ───── 9 stores ───── */
+  .chips { display:flex; gap:8px; overflow-x:auto; margin:18px calc(-1 * var(--side)) 0; padding:2px var(--side) 6px; scrollbar-width:none; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chips button { flex:none; min-height:40px; padding:0 16px; border-radius:999px; border:1px solid rgba(43,38,32,.14); background:rgba(255,255,255,.6); font-size:14px; }
+  .chips button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .store-card { position:relative; flex:1 1 auto; min-height:0; margin-top:14px; border-radius:30px; padding:26px 24px; display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden; color:var(--ink); box-shadow:var(--shadow); border:1px solid var(--glass-edge); background:var(--glass); }
+  .store-card::before { content:""; position:absolute; inset:-30%; background:radial-gradient(circle at 70% 25%,var(--tint,#FCB7DD) 0%,transparent 55%); opacity:.85; transition:background .6s var(--ease); }
+  .store-card > * { position:relative; }
+  .store-card .city { font:400 clamp(40px,12vw,54px)/1 'Marcellus',serif; }
+  .store-card .sig { margin-top:12px; font:400 20px/1.3 'Marcellus',serif; color:var(--ink-2); }
+  .store-card .hours { margin-top:8px; font-size:14px; color:var(--ink-3); }
+  .store-card .swap { animation:swap .5s var(--rise); }
+  .seal { position:absolute; top:clamp(18px,5svh,40px); right:clamp(16px,6vw,30px); width:min(46vw,190px); aspect-ratio:1; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; background:rgba(255,253,249,.55); border:1.5px dashed rgba(43,38,32,.28); }
+  .seal svg { position:absolute; inset:6%; width:88%; height:88%; animation:spin 40s linear infinite; }
+  .seal b { font:400 clamp(44px,13vw,64px)/1 'Marcellus',serif; color:var(--ink-2); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @keyframes swap { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
+
+  /* ───── 10 newsletter + footer ───── */
+  .letter { margin-top:18px; padding:22px 20px; border-radius:28px; border:1px solid var(--glass-edge); background:var(--glass); -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px); box-shadow:var(--shadow); }
+  .letter .title { font-size:clamp(26px,7.6vw,32px); }
+  .email { display:flex; align-items:center; gap:8px; margin-top:16px; border-bottom:1px solid rgba(43,38,32,.25); }
+  .email input { flex:1; min-width:0; height:48px; border:0; background:transparent; font:inherit; font-size:16px; outline:none; }
+  .email button { border:0; background:transparent; min-height:44px; font-size:15px; color:var(--moss-deep); }
+  .demo { margin-top:10px; font-size:12px; color:var(--ink-3); }
+  .news { justify-content:center; }
+  .foot { margin-top:26px; padding-top:0; display:grid; grid-template-columns:1fr 1fr; gap:14px 10px; font-size:14px; }
+  .foot b { display:block; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin-bottom:4px; }
+  .foot a { display:block; color:var(--ink-2); text-decoration:none; line-height:1.9; }
+  .legal { grid-column:1 / -1; font-size:12px; color:var(--ink-3); border-top:1px solid rgba(43,38,32,.12); padding-top:12px; display:flex; justify-content:space-between; gap:10px; }
+
+  /* ───── product sheet ───── */
+  .sheet-veil { position:fixed; inset:0; z-index:80; background:rgba(20,18,14,.35); opacity:0; pointer-events:none; transition:opacity .35s var(--ease); }
+  .sheet { position:fixed; z-index:90; left:0; right:0; bottom:0; max-height:88svh; overflow:auto; padding:10px 22px calc(env(safe-area-inset-bottom) + 22px);
+    border-radius:28px 28px 0 0; background:var(--paper); transform:translateY(105%); transition:transform .5s var(--rise); }
+  .sheet.open { transform:none; }
+  .sheet.open + .sheet-veil, .sheet-veil.open { opacity:1; pointer-events:auto; }
+  .grab { width:40px; height:5px; border-radius:3px; background:rgba(43,38,32,.2); margin:0 auto 14px; }
+  .sheet .pic { height:min(34svh,260px); border-radius:20px; overflow:hidden; background:#9fd0ef; }
+  .sheet .pic img { width:100%; height:100%; object-fit:cover; }
+  .sheet h3 { font-size:28px; margin-top:16px; }
+  .sheet .flavor { font-size:14px; color:var(--ink-3); margin-top:4px; }
+  .sheet .desc { margin-top:12px; color:var(--ink-2); }
+  .sheet ul { margin:12px 0 0; padding:0; }
+  .sheet li { list-style:none; padding:9px 0; border-top:1px solid rgba(43,38,32,.1); font-size:14px; color:var(--ink-2); }
+  .sheet .buy { display:flex; gap:10px; align-items:center; margin-top:16px; }
+  .sheet .buy b { font-size:20px; margin-right:auto; }
+  .sheet .demo { text-align:center; }
+
+  /* Short phones (SE, landscape-ish) keep every chapter on one screen. */
+  @media (max-height:640px) {
+    :root { --top:calc(env(safe-area-inset-top) + 70px); --bottom:calc(env(safe-area-inset-bottom) + 14px); }
+    .title { font-size:26px; }
+    .lead { font-size:14.5px; margin-top:6px; }
+    .fridge-card { padding:16px; margin-top:-44px; }
+    .fridge-card .lead { display:none; }
+    .facts b { font-size:20px; }
+    .step h3 { font-size:32px; }
+    .step .detail { display:none; }
+    .story-copy .lead { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .review blockquote { font-size:19px; }
+    .letter { padding:18px; }
+    .foot { display:none; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    *,*::before,*::after { transition-duration:.01ms !important; animation:none !important; }
+    .rv,.mission p { opacity:1; transform:none; filter:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <img src="./assets/web/optimized/kandy-logo-800-lossless.webp" alt="KANDy">
+  <span class="nav-chapter" id="navChapter">Welcome</span>
+  <button class="nav-bag" id="bagBtn" type="button">Bag <b id="bagCount">0</b></button>
+</header>
+<nav class="progress" id="progress" aria-hidden="true"></nav>
+
+<main>
+  <!-- 1 -->
+  <section class="ch hero" data-name="Welcome">
+    <img class="hero-img" src="./assets/web/kandy-garden-share-hd-20261008.jpg" alt="The pink KANDy wordmark resting on a meadow">
+    <img class="hero-logo" src="./assets/web/optimized/kandy-logo-800-lossless.webp" alt="KANDy">
+    <p class="hero-note">Preview still — the live 3D meadow plays here on the site</p>
+    <div class="hero-copy">
+      <p class="rv">Confections from an English manor garden.</p>
+      <div class="hero-cta rv" style="--d:1">
+        <a class="btn btn-cream" href="#collection">Shop the collection</a>
+        <a class="btn btn-glass" href="#story">Our story ›</a>
+      </div>
+    </div>
+    <span class="next-hint">Swipe up</span>
+  </section>
+
+  <!-- 2 -->
+  <section class="ch mission" data-name="The garden">
+    <p style="--d:0">Candy should feel like something found in an old walled garden.</p>
+    <p style="--d:1">Grown slowly, beneath leaves and afternoon light.</p>
+    <p style="--d:2">Made from fruit, flowers, herbs, and a little imagination.</p>
+    <p style="--d:3">Every piece carries a trace of the garden it came from.</p>
+  </section>
+
+  <!-- 3 -->
+  <section class="ch fridge" data-name="The fridge line-up">
+    <div class="fridge-photo rv"><img src="./assets/web/optimized/manor-oak-bark-lifestyle-720-lossless.webp" alt="A woman in a blue fleece holding Manor Oak Bark, with Woodland Toadstools in her tote"></div>
+    <div class="fridge-card rv" style="--d:1">
+      <span class="eyebrow">The fridge line-up</span>
+      <h2 class="title">Four garden favourites, always within reach.</h2>
+      <p class="lead">Wild strawberry, dark chocolate, caramel almond and vanilla bean — four small-batch treats.</p>
+      <ul class="facts">
+        <li><b>4</b><span>full-size pouches</span></li>
+        <li><b>4</b><span>garden flavours</span></li>
+        <li><b>0g</b><span>added sugar</span></li>
+      </ul>
+      <a class="btn btn-dark" href="#collection">Meet the collection</a>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="ch collection" id="collection" data-name="The collection">
+    <span class="eyebrow rv">The collection</span>
+    <h2 class="title rv" style="--d:1">Four confections from the grounds.</h2>
+    <div class="deck rv" style="--d:2" id="deck"></div>
+    <div class="deck-foot rv" style="--d:3">
+      <button type="button" id="deckPrev" aria-label="Previous confection">‹</button>
+      <span class="deck-count" id="deckCount">1 / 5</span>
+      <button type="button" id="deckNext" aria-label="Next confection">›</button>
+    </div>
+    <p class="swipe-tip rv" style="--d:3">Swipe the pile · tap a pouch for details</p>
+  </section>
+
+  <!-- 5 -->
+  <section class="ch process" data-name="How it's made">
+    <span class="eyebrow rv">How it's made</span>
+    <h2 class="title rv" style="--d:1">Four steps, none of them hurried.</h2>
+    <div class="bars rv" style="--d:2" id="bars"><i></i><i></i><i></i><i></i></div>
+    <div class="step-stage rv" style="--d:2" id="steps">
+      <article class="step on">
+        <span class="num">01</span><h3>Pick</h3>
+        <svg viewBox="0 0 100 100"><path d="M50 76V44M50 67Q35 65 30 54Q47 51 50 67M50 59Q64 59 70 48Q54 46 50 59" fill="var(--moss-soft)" stroke="var(--moss)" stroke-width="1.8" stroke-linejoin="round"/><g class="a-petal"><path d="M50 50C30 50 24 27 36 24C40 10 56 12 60 23C76 20 81 44 61 49Z" fill="var(--rose-light)" stroke="var(--rose-deep)" stroke-width="1.8"/><path d="M50 48Q39 36 42 26M50 48Q62 34 60 24" fill="none" stroke="var(--rose-deep)" stroke-width="1.8"/><circle cx="51" cy="40" r="5" fill="var(--citrine)"/></g></svg>
+        <p class="summary">Harvested by hand each week.</p>
+        <p class="detail">Fourteen petals go into a single tin, cut before the dew lifts.</p>
+      </article>
+      <article class="step">
+        <span class="num">02</span><h3>Simmer</h3>
+        <svg viewBox="0 0 100 100"><g fill="none" stroke="var(--peach-deep)" stroke-width="2.2" stroke-linecap="round"><path class="a-steam" d="M34 36c-9-9 9-11 0-20"/><path class="a-steam a-steam-2" d="M50 31c-9-9 9-11 0-20"/><path class="a-steam a-steam-3" d="M64 36c-9-9 9-11 0-20"/><path d="M22 47h56l-6 25q-2 7-10 7H38q-8 0-10-7Z" fill="var(--peach)"/><rect x="20" y="43" width="60" height="7" rx="3" fill="#F7B48F"/><path d="M20 53H12v10h13M80 53h8v10H75"/></g></svg>
+        <p class="summary">Slow-cooked in small copper pots.</p>
+        <p class="detail">Forty minutes at a bare tremble — copper holds the heat evenly.</p>
+      </article>
+      <article class="step">
+        <span class="num">03</span><h3>Shape</h3>
+        <svg viewBox="0 0 100 100"><rect x="23" y="83" width="54" height="4" rx="2" fill="var(--moss-soft)"/><path d="M43 58h14v17a7 7 0 0 1-14 0Z" fill="#FFF3E4" stroke="var(--rose-deep)" stroke-width="1.8"/><path d="M27 59a23 23 0 0 1 46 0Z" fill="var(--rose-light)" stroke="var(--rose-deep)" stroke-width="1.8"/><circle cx="41" cy="49" r="3" fill="white"/><circle cx="58" cy="45" r="3" fill="white"/><g class="a-stamp" stroke="var(--citrine-deep)" stroke-width="1.8"><path d="M50 16v7" stroke-width="4"/><rect x="33" y="9" width="34" height="7" rx="3.5" fill="var(--citrine)"/><rect x="35" y="22" width="30" height="6" rx="2" fill="#F3DEA2"/></g></svg>
+        <p class="summary">Pressed into garden trinkets.</p>
+        <p class="detail">Six moulds, all cut from originals found in the manor kitchen.</p>
+      </article>
+      <article class="step">
+        <span class="num">04</span><h3>Wrap</h3>
+        <svg viewBox="0 0 100 100"><rect x="25" y="44" width="50" height="36" rx="5" fill="var(--moss-soft)" stroke="var(--moss-deep)" stroke-width="1.8"/><path d="M50 44v36" fill="none" stroke="var(--moss-deep)" stroke-width="4"/><g class="a-lid"><rect x="22" y="36" width="56" height="11" rx="4" fill="#F1F6EC" stroke="var(--moss-deep)" stroke-width="1.8"/><path d="M50 36v11" fill="none" stroke="var(--moss-deep)" stroke-width="4"/><g class="a-bow" fill="var(--rose-light)" stroke="var(--rose-deep)" stroke-width="1.8"><path d="M50 34c-25 0-19-20-9-11ZM50 34c25 0 19-20 9-11Z"/><circle cx="50" cy="33" r="4"/></g></g></svg>
+        <p class="summary">Boxed the day it's made.</p>
+        <p class="detail">Tied, weighed and posted before the kitchen closes that evening.</p>
+      </article>
+      <div class="tap-zones"><button type="button" aria-label="Previous step" id="stepPrev"></button><button type="button" aria-label="Next step" id="stepNext"></button></div>
+    </div>
+    <p class="step-tip rv" style="--d:3">Tap to turn the page</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="ch numbers" data-name="By the numbers">
+    <div class="head">
+      <span class="eyebrow rv">By the numbers</span>
+      <h2 class="title rv" style="--d:1">Small batches, kept on paper.</h2>
+    </div>
+    <div class="stats">
+      <div class="stat rv" style="--d:1"><b>4</b><span>Signature garden shapes</span></div>
+      <div class="stat rv" style="--d:2"><b>6</b><span>Cities worldwide</span></div>
+      <div class="stat rv" style="--d:3"><b>100%</b><span>Small-batch crafted</span></div>
+      <div class="stat rv" style="--d:4"><b>0g</b><span>Added sugar</span></div>
+    </div>
+    <div class="receipt-slot">
+      <img src="./assets/web/optimized/receipt-kandy-lossless.webp" alt="A KANDy batch receipt">
+      <span class="receipt-caption">Every tin ships with its batch receipt</span>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="ch story" id="story" data-name="Our story">
+    <div class="story-photo rv"><img src="./assets/web/story-woodland-640.webp" alt="Sharing Woodland Toadstools"></div>
+    <div class="story-copy">
+      <span class="eyebrow rv" style="--d:1">About KANDy</span>
+      <h2 class="title rv" style="--d:1">Grown, not manufactured.</h2>
+      <p class="lead rv" style="--d:2">Made for small moments of wonder, Woodland Toadstools turn a shared sweet into a tiny piece of the manor garden.</p>
+      <a class="link rv" style="--d:3" href="#">Read our story ›</a>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="ch reviews" data-name="Sweet moments">
+    <div class="head">
+      <span class="eyebrow rv">Sweet moments</span>
+      <h2 class="title rv" style="--d:1">What people are saying.</h2>
+    </div>
+    <div class="rail rv" style="--d:2" id="rail"></div>
+    <p class="rail-count" id="railCount">1 / 9 · swipe</p>
+  </section>
+
+  <!-- 9 -->
+  <section class="ch stores" data-name="Find us">
+    <span class="eyebrow rv">Find us</span>
+    <h2 class="title rv" style="--d:1">Six gardens, six flavours.</h2>
+    <div class="chips rv" style="--d:2" id="chips"></div>
+    <div class="store-card rv" style="--d:3" id="storeCard"></div>
+  </section>
+
+  <!-- 10 -->
+  <section class="ch news" data-name="Garden correspondence">
+    <div class="letter rv">
+      <span class="eyebrow">Garden correspondence</span>
+      <h2 class="title">Unlock the garden.</h2>
+      <p class="lead">New shapes, seasonal drops, and store perks — straight to your inbox.</p>
+      <form class="email" onsubmit="event.preventDefault(); this.nextElementSibling.textContent='Thank you — this is a portfolio demo, nothing was sent.';">
+        <input type="email" placeholder="Email address" aria-label="Email address">
+        <button type="submit">Subscribe →</button>
+      </form>
+      <p class="demo">Portfolio demo · No email will be sent or saved.</p>
+    </div>
+    <div class="foot rv" style="--d:1">
+      <div><b>Shop</b><a href="#collection">Woodland Toadstools</a><a href="#collection">Manor Oak Bark</a><a href="#collection">Meadow Daisies</a></div>
+      <div><b>Company</b><a href="#story">Our story</a><a href="#">Stores</a><a href="#">Careers</a></div>
+      <div class="legal"><span>© 2026 KANDy Manor Confections</span><span>Portfolio by @kaxnvr</span></div>
+    </div>
+  </section>
+</main>
+
+<aside class="sheet" id="sheet" aria-hidden="true">
+  <div class="grab"></div>
+  <div class="pic"><img id="sheetImg" alt=""></div>
+  <h3 id="sheetName"></h3>
+  <p class="flavor" id="sheetFlavor"></p>
+  <p class="desc" id="sheetDesc"></p>
+  <ul id="sheetFacts"></ul>
+  <div class="buy"><b id="sheetPrice"></b><button class="btn btn-dark" id="sheetAdd" type="button">Add to bag</button></div>
+  <p class="demo">Portfolio demo — no orders or payments are processed.</p>
+</aside>
+<div class="sheet-veil" id="veil"></div>
+
+<script>
+(() => {
+  const products = [
+    { name:'Woodland Toadstools', flavor:'Wild strawberry', price:'$6.80', img:'woodland-toadstools', hero:true, badge:'Bestseller',
+      desc:'Chewy wild-strawberry gummies shaped like storybook toadstools, plucked straight from the garden bed.',
+      facts:['6 toadstools per pack','Wild strawberries from the walled garden','Zero added sugar'] },
+    { name:'Manor Oak Bark', flavor:'Dark chocolate + toasted hazelnut', price:'$8.50', img:'manor-oak-bark',
+      desc:'Dark chocolate bark ridged like the old oak by the gate, flecked with toasted hazelnut and broken by hand.',
+      facts:['4 shards per pack','70% single-origin dark','Snaps cold, never tempered twice'] },
+    { name:'Meadow Daisies', flavor:'Vanilla bean', price:'$5.80', img:'meadow-daisies',
+      desc:'Vanilla-bean marshmallow petals around a golden centre, dusted in the finest sugar we mill.',
+      facts:['8 daisies per pack','Real Madagascar vanilla','Set overnight, cut at dawn'] },
+    { name:'Garden Snail Swirls', flavor:'Caramel + almond', price:'$5.80', img:'garden-snail-swirls',
+      desc:'Caramel and almond hard candy, pulled warm and swirled into the shell of a slow garden snail.',
+      facts:['6 swirls per pack','Toasted Marcona almond','Pulled by hand on the slab'] },
+    { name:"The Gardener's Selection", flavor:'All four, in one tin', price:'$22.00', img:'the-gardeners-selection',
+      desc:'All four confections laid out in one lidded tin, ribboned and ready to hand over.',
+      facts:['12 packs in one gift box','Reusable pressed-steel tin','Ships the morning it is packed'] }
+  ];
+  const reviews = [
+    ['Priya N.','priya-n','5.0','The toadstool gummies are almost too cute to eat. Almost. I bought a tin to save for a dinner party and they were gone by Thursday.','London · Ordered three times'],
+    ['Marcus D.','marcus-d','4.5','The oak bark is the one that surprised me. Proper dark chocolate, a real snap, and the hazelnut is toasted rather than just sprinkled on.','Melbourne · Verified buyer'],
+    ['Noor A.','noor-a','5.0','The tin turned up with a hand-written batch card tucked under the lid. I did not expect to feel sentimental about packaging.','New York · Ordered twice'],
+    ['Wei L.','wei-l','4.5','I kept half the gift box for myself, which I am not proud of. The snail swirls are the sleeper hit — caramel and almond, and they last.','Shanghai · Verified buyer'],
+    ['Tom H.','tom-h','5.0','I keep a tin on my desk at the studio. It has become a running joke that no meeting starts until it has been passed around the table.','California · Subscriber'],
+    ['Diego F.','diego-f','4.5','The meadow daisies are the ones I keep going back to. Bright and floral, and not remotely sickly the way most fruit sweets are.','Bangkok · Verified buyer'],
+    ['Sofia M.','sofia-m','5.0','Tastes like a real strawberry patch and looks like a fairy tale. My daughter thinks the toadstools come from the garden down the road.','London · Verified buyer'],
+    ['Yuki T.','yuki-t','5.0','The receipt tucked into the box is a ridiculous detail and I love it. Batch number, the date it was made, hand-rolled. I keep every one.','Melbourne · Ordered five times'],
+    ['Amara K.','amara-k','5.0','Sent a box to my sister and she rang me from her kitchen halfway through opening it. That has never happened with a gift before.','New York · Subscriber']
+  ];
+  const stores = [
+    ['London','Elderberry Bloom','Mon–Sat · 09:00–19:00','#C9A6D8'],
+    ['California','Meyer Lemon Blossom','Mon–Sun · 09:00–20:00','#F3DE8A'],
+    ['New York','Pumpkin Spice','Mon–Sun · 08:00–20:00','#F4B183'],
+    ['Melbourne','Wattle Honey','Mon–Sun · 08:00–18:00','#F2CF6B'],
+    ['Shanghai','Osmanthus Oolong','Mon–Sun · 10:00–21:00','#E9C27A'],
+    ['Bangkok','Mango Jasmine','Mon–Sun · 10:00–22:00','#F7C59F'],
+    ['Online','Ships worldwide — dispatched the morning it’s made','Open always','#CFE3C8']
+  ];
+  const $ = id => document.getElementById(id);
+
+  /* chapters: progress dots, nav label, entrance */
+  const chapters = [...document.querySelectorAll('.ch')];
+  const progress = $('progress');
+  chapters.forEach(() => progress.appendChild(document.createElement('i')));
+  const dots = [...progress.children];
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.intersectionRatio < .6) return;
+      const i = chapters.indexOf(e.target);
+      e.target.classList.add('in');
+      dots.forEach((d, k) => d.classList.toggle('on', k === i));
+      progress.classList.toggle('light', e.target.classList.contains('hero'));
+      $('navChapter').textContent = e.target.dataset.name;
+    });
+  }, { threshold:[.6] });
+  chapters.forEach(c => io.observe(c));
+
+  /* collection deck */
+  const deck = $('deck');
+  products.forEach((p, i) => {
+    const c = document.createElement('article');
+    c.className = 'card' + (p.hero ? ' hero-card' : '');
+    c.innerHTML = (p.badge ? `<span class="ribbon">${p.badge}</span>` : '') +
+      `<div class="pic"><img src="./assets/web/${p.img}-960.webp" alt="${p.name} packaging" draggable="false"></div>` +
+      `<span class="flavor">${p.flavor}</span><h3>${p.name}</h3><div class="row"><b>${p.price}</b><span>View details ↗</span></div>`;
+    c.addEventListener('click', () => { if (!moved && order[0] === i) openSheet(p); });
+    deck.appendChild(c);
+  });
+  const cards = [...deck.children];
+  let order = products.map((_, i) => i), moved = false;
+  function layout(dx = 0) {
+    order.forEach((idx, pos) => {
+      const c = cards[idx];
+      c.style.setProperty('--a', Math.min(pos, 3));
+      c.style.setProperty('--o', pos === 0 ? 0 : (pos % 2 ? 1 : -1) * Math.min(pos, 2) * .6);
+      c.style.zIndex = 10 - pos;
+      if (pos === 0 && dx) c.style.transform = `translate(-50%,-50%) translateX(${dx}px) rotate(${dx / 18}deg)`;
+      else c.style.transform = '';
+    });
+    $('deckCount').textContent = `${order[0] + 1} / ${products.length}`;
+  }
+  function step(dir) {
+    order = dir > 0 ? [...order.slice(1), order[0]] : [order.at(-1), ...order.slice(0, -1)];
+    layout();
+  }
+  let startX = 0, startY = 0, dragging = false;
+  deck.addEventListener('pointerdown', e => { startX = e.clientX; startY = e.clientY; dragging = true; moved = false; cards[order[0]].classList.add('dragging'); });
+  deck.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - startY)) { moved = true; layout(dx); }
+  });
+  const end = e => {
+    if (!dragging) return; dragging = false;
+    cards[order[0]].classList.remove('dragging');
+    const dx = e.clientX - startX;
+    if (moved && Math.abs(dx) > 60) step(dx < 0 ? 1 : -1); else layout();
+    setTimeout(() => { moved = false; }, 0);
+  };
+  deck.addEventListener('pointerup', end);
+  deck.addEventListener('pointercancel', end);
+  $('deckNext').onclick = () => step(1);
+  $('deckPrev').onclick = () => step(-1);
+  layout();
+
+  /* product sheet + demo bag */
+  let bag = 0, current = null;
+  function openSheet(p) {
+    current = p;
+    $('sheetImg').src = `./assets/web/${p.img}-960.webp`; $('sheetImg').alt = `${p.name} packaging`;
+    $('sheetName').textContent = p.name; $('sheetFlavor').textContent = p.flavor;
+    $('sheetDesc').textContent = p.desc; $('sheetPrice').textContent = p.price;
+    $('sheetFacts').innerHTML = p.facts.map(f => `<li>${f}</li>`).join('');
+    $('sheet').classList.add('open'); $('veil').classList.add('open'); $('sheet').setAttribute('aria-hidden','false');
+  }
+  function closeSheet() { $('sheet').classList.remove('open'); $('veil').classList.remove('open'); $('sheet').setAttribute('aria-hidden','true'); }
+  $('veil').onclick = closeSheet;
+  $('sheetAdd').onclick = () => { bag++; $('bagCount').textContent = bag; closeSheet(); };
+  let sheetY = null;
+  $('sheet').addEventListener('touchstart', e => { sheetY = e.touches[0].clientY; }, { passive:true });
+  $('sheet').addEventListener('touchend', e => { if (sheetY !== null && e.changedTouches[0].clientY - sheetY > 80 && $('sheet').scrollTop <= 0) closeSheet(); sheetY = null; });
+
+  /* process: story-style taps */
+  const steps = [...document.querySelectorAll('.step')], bars = [...$('bars').children];
+  let s = 0;
+  function showStep(n) {
+    s = (n + steps.length) % steps.length;
+    steps.forEach((el, k) => { el.classList.toggle('on', k === s); el.classList.toggle('off', k < s); });
+    bars.forEach((b, k) => b.style.setProperty('--f', k <= s ? 1 : 0));
+  }
+  $('stepNext').onclick = () => showStep(s + 1);
+  $('stepPrev').onclick = () => showStep(s - 1);
+  showStep(0);
+
+  /* reviews rail */
+  const rail = $('rail');
+  rail.innerHTML = reviews.map(([n, a, r, q, m]) => `<figure class="review"><header><img src="./assets/testimonials/${a}.webp" alt="" loading="lazy"><div><b>${n}</b><small>★★★★★ ${r}</small></div></header><blockquote>${q}</blockquote><footer>${m}</footer></figure>`).join('');
+  rail.addEventListener('scroll', () => {
+    const w = rail.firstElementChild.getBoundingClientRect().width + 12;
+    $('railCount').textContent = `${Math.round(rail.scrollLeft / w) + 1} / ${reviews.length} · swipe`;
+  }, { passive:true });
+
+  /* stores */
+  const chips = $('chips');
+  function showStore(i) {
+    const [city, sig, hours, tint] = stores[i];
+    [...chips.children].forEach((b, k) => b.classList.toggle('on', k === i));
+    const card = $('storeCard');
+    card.style.setProperty('--tint', tint);
+    const initials = city === 'Online' ? '@' : city.split(' ').map(w => w[0]).join('');
+    card.innerHTML = `<div class="seal swap"><svg viewBox="0 0 200 200"><defs><path id="ring" d="M100 100m-82 0a82 82 0 1 1 164 0a82 82 0 1 1 -164 0"/></defs><text font-family="Lato" font-size="12.5" fill="rgba(43,38,32,.55)"><textPath href="#ring" textLength="505" lengthAdjust="spacing">KANDy · ${city.toUpperCase()} GARDEN · KANDy · ${city.toUpperCase()} GARDEN ·</textPath></text></svg><b>${initials}</b></div><div class="swap"><span class="eyebrow">${city === 'Online' ? 'Everywhere' : 'Signature flavour'}</span><div class="city">${city}</div><p class="sig">${sig}</p><p class="hours">${hours}</p></div>`;
+  }
+  stores.forEach((st, i) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = st[0]; b.onclick = () => showStore(i); chips.appendChild(b); });
+  showStore(0);
+})();
+</script>
+</body>
+</html>
