@@ -54,8 +54,8 @@ const reduced  = matchMedia('(prefers-reduced-motion:reduce)').matches;
 // but each blade out there is scaled up with distance, so it still needs
 // fewer than the meadow for the same apparent density.
 const TIERS = {
-  high: { blades:38000, ridge:170000, dpr:1.75, bloom:true, dof:true, blurSamples:24, blurScale:.5, bladeSegments:5, shadowSize:2048, minDprScale:.62, daisies:190, petals:11, flutters:0, fg:14 },
-  mid:  { blades:22000, ridge:95000,  dpr:1.60, bloom:true, dof:true, blurSamples:12, blurScale:.4, bladeSegments:4, shadowSize:1536, minDprScale:.72, daisies:120, petals:8, flutters:0, fg:10 },
+  high: { blades:38000, ridge:170000, dpr:1.75, pixelBudget:6000000, bloom:true, dof:true, blurSamples:24, blurScale:.5, bladeSegments:5, shadowSize:2048, minDprScale:.62, daisies:190, petals:11, flutters:0, fg:14 },
+  mid:  { blades:22000, ridge:95000,  dpr:1.60, pixelBudget:3600000, bloom:true, dof:true, blurSamples:12, blurScale:.4, bladeSegments:4, shadowSize:1536, minDprScale:.72, daisies:120, petals:8, flutters:0, fg:10 },
   // Portrait puts the camera much closer to the turf than landscape does, and
   // below ~12k the dome starts showing through between the blades.
   low:  { blades:12000, ridge:45000,  dpr:1.35, bloom:false, dof:true, blurSamples:8, blurScale:.33, bladeSegments:3, shadowSize:1024, minDprScale:.78, daisies:70, petals:5, flutters:0, fg:7 }
@@ -2262,7 +2262,7 @@ function resize(){
   // buffers for each frame. Keep their total area bounded, not just the DPR.
   const dpr = phoneMode
     ? Math.min(devicePixelRatio||1, Q.dpr)
-    : Math.min(devicePixelRatio||1, Q.dpr, Math.sqrt(2500000/(w*h))) * dprScale;
+    : Math.min(devicePixelRatio||1, Q.dpr, Math.sqrt((Q.pixelBudget||2500000)/(w*h))) * dprScale;
   // Browser interpolation attenuates dithering when the bounded canvas is
   // upscaled on Retina. Compensate without increasing any render target.
   outputPass.uniforms.uDitherStrength.value = 1.5 * Math.min(2,(devicePixelRatio||1)/dpr);
@@ -2445,7 +2445,7 @@ function cameraUpdate(phi){
    Only touches things that are free to change between frames. Resolution goes
    first within a tier-specific clarity floor. Keep depth of field: turning it
    off exposes hard grass edges. Optional bloom and blur resolution can fall. */
-let slow = 0, fast = 0;
+let slow = 0, fast = 0, resolutionTrial = null, resolutionLocked = false;
 function adapt(){
   // rAF cadence alone cannot distinguish a 30 Hz browser/power policy from
   // GPU pressure. The phone profile keeps its explicit resolution budget fixed;
@@ -2468,11 +2468,31 @@ function adapt(){
   // already sorted into the low tier before the first frame.
   if (maxRawDt > 0.12){ slow = 0; fast = 0; maxRawDt = 0; return; }
   maxRawDt = 0;
+  // A resolution drop must earn its blur. A frame cap that is not GPU
+  // pressure (an embedded preview, a power policy, a slow compositor) does
+  // not speed up when the image gets softer; measured: halving the meadow's
+  // pixels moved a capped 36fps nowhere. Undo such a drop and stop trying.
+  if (resolutionTrial){
+    if (--resolutionTrial.windows > 0) return;
+    const gained = fps >= resolutionTrial.fps * 1.15;
+    if (!gained){
+      dprScale = resolutionTrial.scale; resize();
+      resolutionLocked = true;
+    }
+    resolutionTrial = null; slow = 0; fast = 0;
+    return;
+  }
   if (fps < 46){
     slow++; fast = 0;
-    if (slow > 3){
+    // Once a softer image has been shown not to help, the slow frames are not
+    // GPU-bound, so dropping bloom or blur quality would not help either.
+    if (slow > 3 && resolutionLocked){ slow = 0; }
+    else if (slow > 3){
       slow = 0;
-      if (dprScale > Q.minDprScale){ dprScale = Math.max(Q.minDprScale, dprScale - 0.12); resize(); }
+      if (dprScale > Q.minDprScale){
+        resolutionTrial = {fps, scale:dprScale, windows:4};
+        dprScale = Math.max(Q.minDprScale, dprScale - 0.12); resize();
+      }
       else if (bloom.enabled){ bloom.enabled = false; }
       else if (dofPass.blurScale > .25){
         dofPass.blurScale = Math.max(.25, dofPass.blurScale - .05);
