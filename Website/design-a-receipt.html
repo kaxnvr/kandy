@@ -1381,7 +1381,7 @@
     .reveal, .stagger > * { opacity:1 !important; transform:none !important; }
   }
 </style>
-<link rel="stylesheet" href="./garden-journey.css?v=20261001-short-desktop-1">
+<link rel="stylesheet" href="./garden-journey.css?v=20261122-mid-desktop-1">
 <style>
   /* ===== 收据展开段落（滚动驱动） ===== */
   .receipt-sec{
@@ -1621,15 +1621,15 @@
     backdrop-filter:blur(var(--ui-frame-blur,48px));
   }
 </style>
-<link rel="stylesheet" href="./assets/site-refinement.css?v=20260928-nav-soft-white">
+<link rel="stylesheet" href="./assets/site-refinement.css?v=20261122-mid-desktop-1">
 <script defer src="./assets/garden-club-marquee.js?v=20260928-1"></script>
-<link rel="stylesheet" href="./assets/section-rhythm.css?v=20261001-user-layout-positions-1">
-<script defer src="./assets/section-rhythm.js?v=20261001-short-desktop-1"></script>
+<link rel="stylesheet" href="./assets/section-rhythm.css?v=20261122-mid-desktop-1">
+<script defer src="./assets/section-rhythm.js?v=20261122-mid-desktop-1"></script>
 <link rel="stylesheet" href="./assets/large-fridge-review-gap.css?v=20261001-original-photo-ratio">
 <link rel="stylesheet" href="./assets/mission-copy-outward.css?v=20260924-1">
 <link rel="stylesheet" href="./assets/tray-editorial-entrance.css?v=20260928-reversible-fade">
 <script defer src="./assets/large-fridge-review-gap.js?v=20260924-1"></script>
-<link rel="stylesheet" href="./assets/responsive-layout.css?v=20261008-phone-landscape-2">
+<link rel="stylesheet" href="./assets/responsive-layout.css?v=20261122-mid-desktop-1">
 <script defer src="./assets/responsive-layout.js?v=20260928-1"></script>
 <link rel="stylesheet" href="./assets/portfolio-demo.css?v=20261008-1">
 <link rel="stylesheet" href="./assets/phone-layout.css?v=20261013-no-mission-1">
@@ -2389,7 +2389,7 @@
   <p class="demo-bag-status" id="demoBagStatus" role="status" aria-atomic="true"></p>
 </dialog>
 <script src="./assets/portfolio-demo.js?v=20261008-1"></script>
-<script src="./garden-journey.js?v=20261013-phone-mission-anchor-1"></script>
+<script src="./garden-journey.js?v=20261122-mid-desktop-1"></script>
 <script src="./assets/stores-mist.js?v=20260920-3"></script>
 <script>
   var nav = document.getElementById('nav');
@@ -2481,7 +2481,7 @@
   var processMetrics = [];
   // Compact/touch/portrait layouts must stay readable in native page flow.
   // The approved desktop scene is deliberately outside this query.
-  var compactLayout = matchMedia('(max-width:1199px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
+  var compactLayout = matchMedia('(max-width:799px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
   // A two-column portrait card fits its viewport and shares the desktop's
   // stationary opacity checkpoint. Phones still need natural document flow.
   var portraitFridge = matchMedia('(min-width:701px) and (max-aspect-ratio:1/1) and (prefers-reduced-motion:no-preference)');
@@ -3093,7 +3093,7 @@ import { mountResponsiveReceipt } from './assets/responsive-receipt.js?v=2026100
 const track = document.getElementById('receipt-track');
 const receiptSection = track?.closest('.receipt-sec');
 const statsSection = document.getElementById('stats');
-const compactReceiptViewport = matchMedia('(max-width:1199px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
+const compactReceiptViewport = matchMedia('(max-width:799px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
 /* Bound projected paper size on tall phones/tablets. Changing projection,
    not the canvas scale, also shrinks the component's measured page footprint. */
 function receiptFieldOfView(height, compact) {

@@ -13,8 +13,8 @@
   const processWrap = root.querySelector('#process > .wrap');
   // The pinned editorial needs a desktop measure. Compact screens keep native
   // vertical flow so full-size body copy cannot be clipped below the viewport.
-  const viewport = matchMedia('(min-width: 1200px) and (min-height: 600px)');
-  const compact = matchMedia('(max-width:1199px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
+  const viewport = matchMedia('(min-width: 800px) and (min-height: 600px)');
+  const compact = matchMedia('(max-width:799px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (n, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, n));
   let enabled = false;
@@ -299,7 +299,9 @@
     const height = innerHeight;
     // Preserve the approved 700px+ composition exactly. Only shorter desktop
     // interiors shrink uniformly; pin, camera, travel and document flow do not.
-    root.style.setProperty('--journey-fit-scale', `${Math.min(1, (height - 116) / 584)}`);
+    // Narrower desktop windows (800-1199px) keep the same wide composition and
+    // simply scale it, instead of switching to the stacked tablet flow.
+    root.style.setProperty('--journey-fit-scale', `${Math.min(1, (height - 116) / 584, width / 1200)}`);
     giftHold = height * .14;
     travel = Math.max(width, height) * 1.05;
     collectionHold = height * .3;

@@ -50,7 +50,7 @@
 /* Desktop cards + anchored paper: the first 24px lift included About.
    The additional 20px lifts only this interlude; compensate its lower flow
    edge to preserve About, all component sizes and portrait spacing. */
-@media (min-width:1200px) and (min-aspect-ratio:1/1) and (pointer:fine) {
+@media (min-width:800px) and (min-aspect-ratio:1/1) and (pointer:fine) {
   #stats,
   .garden-journey.journey-enabled + #stats {
     margin-top:calc(var(--chapter-gap) - var(--process-tail-clearance,0px) + var(--stats-center-offset,0px) - 44px);
