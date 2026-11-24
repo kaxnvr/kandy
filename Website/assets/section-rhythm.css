@@ -30,7 +30,7 @@
 /* Saved from the user's position panel (baseline 20261001-about-lift-4):
    stats + paper -116px; About and every following chapter -240px.
    Only desktop positions change; all component sizes and portrait flow stay. */
-@media (min-width:835px) and (min-aspect-ratio:1/1) and (pointer:fine) {
+@media (min-width:835px) and (min-aspect-ratio:1/1) {
   :root {
     --layout-saved-stats-y:-116px;
     --layout-saved-about-y:-260px;
@@ -50,7 +50,7 @@
 /* Desktop cards + anchored paper: the first 24px lift included About.
    The additional 20px lifts only this interlude; compensate its lower flow
    edge to preserve About, all component sizes and portrait spacing. */
-@media (min-width:800px) and (min-aspect-ratio:1/1) and (pointer:fine) {
+@media (min-width:800px) and (min-aspect-ratio:1/1) {
   #stats,
   .garden-journey.journey-enabled + #stats {
     margin-top:calc(var(--chapter-gap) - var(--process-tail-clearance,0px) + var(--stats-center-offset,0px) - 44px);

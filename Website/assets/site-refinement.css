@@ -308,7 +308,7 @@
 }
 /* A horizontal rail is intentional on tablets too: every package remains
    reachable rather than half clipped by a desktop fan. */
-@media (max-width:799px),(hover:none),(pointer:coarse) {
+@media (max-width:799px) {
   .fan-deck,.journey-enabled #products .fan-deck {
     display:flex; height:auto; max-width:100%; gap:16px; padding:6px 4px 20px;
     overflow-x:auto; scroll-snap-type:x mandatory; transform:none;

@@ -7,7 +7,7 @@
   const receipt = document.getElementById('receipt-track');
   const story = document.getElementById('story');
   if (!journey || !process || !heading || !stats) return;
-  const compact = matchMedia('(max-width:799px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
+  const compact = matchMedia('(max-width:799px), (max-aspect-ratio:1/1), (max-height:599px)');
   const tallPortrait = matchMedia('(max-aspect-ratio:3/4)');
   let queued = false;
 

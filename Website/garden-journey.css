@@ -217,7 +217,7 @@ html.garden-chapter-stops { scroll-snap-type:y proximity; }
 /* A short laptop keeps the same composition instead of abruptly unfolding
    into the tablet layout. CSS zoom repaints crisp type at the target size;
    it does not reduce canvas/image resolution or scale the fixed scene track. */
-@media (min-width:800px) and (min-height:600px) and (min-aspect-ratio:1/1) and (pointer:fine) {
+@media (min-width:800px) and (min-height:600px) and (min-aspect-ratio:1/1) {
   .journey-enabled #trayPlane { zoom:var(--journey-fit-scale,1); }
   .journey-enabled #products > .wrap,
   .journey-enabled #process > .wrap {

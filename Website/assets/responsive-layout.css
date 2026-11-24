@@ -1,7 +1,7 @@
 /* Responsive-only layer. The approved wide, landscape, fine-pointer desktop
    remains untouched. Keep this query in sync with garden-journey.js and the
    compactLayout query in design-a-receipt.html. */
-@media (max-width:799px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px) {
+@media (max-width:799px), (max-aspect-ratio:1/1), (max-height:599px) {
   :root {
     --gutter:clamp(16px,3.2vw,32px);
     --chapter-gap:clamp(72px,10vw,112px);
@@ -223,7 +223,7 @@
    The later portrait rule retains its fixed/sticky checkpoint; wide desktop
    does not match this query. A near-square landscape must not retain a blank
    viewport simply because it is a few pixels wider than it is tall. */
-@media (max-width:799px) and (prefers-reduced-motion:no-preference), (pointer:coarse) and (prefers-reduced-motion:no-preference), (max-aspect-ratio:1/1) and (prefers-reduced-motion:no-preference), (max-height:599px) and (prefers-reduced-motion:no-preference) {
+@media (max-width:799px) and (prefers-reduced-motion:no-preference), (max-aspect-ratio:1/1) and (prefers-reduced-motion:no-preference), (max-height:599px) and (prefers-reduced-motion:no-preference) {
   #tray.tray-sec {
     --compact-mission-gap:clamp(96px,12svh,132px);
     margin-top:calc(var(--compact-mission-gap) - var(--phone-mission-scene-height,calc(130svh + var(--compact-mission-gap))));

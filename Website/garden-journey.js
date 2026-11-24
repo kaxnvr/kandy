@@ -14,7 +14,7 @@
   // The pinned editorial needs a desktop measure. Compact screens keep native
   // vertical flow so full-size body copy cannot be clipped below the viewport.
   const viewport = matchMedia('(min-width: 800px) and (min-height: 600px)');
-  const compact = matchMedia('(max-width:799px), (pointer:coarse), (max-aspect-ratio:1/1), (max-height:599px)');
+  const compact = matchMedia('(max-width:799px), (max-aspect-ratio:1/1), (max-height:599px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (n, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, n));
   let enabled = false;
@@ -350,7 +350,18 @@
     get enabled() { return enabled; },
     get position() { return position; }
   };
-  addEventListener('resize', refresh);
+  // Touch browsers resize the viewport while their toolbar slides away during
+  // a scroll. Rebuilding the pinned runway then would jump the page, so a
+  // small height-only change on a touch screen keeps the current layout.
+  const touchScreen = matchMedia('(pointer:coarse)');
+  let sizedW = innerWidth, sizedH = innerHeight;
+  addEventListener('resize', () => {
+    const toolbarOnly = touchScreen.matches && innerWidth === sizedW
+      && Math.abs(innerHeight - sizedH) < 160;
+    if (enabled && toolbarOnly) return;
+    sizedW = innerWidth; sizedH = innerHeight;
+    refresh();
+  });
   viewport.addEventListener('change', refresh);
   compact.addEventListener('change', refresh);
   reduced.addEventListener('change', refresh);
